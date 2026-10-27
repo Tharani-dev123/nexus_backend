@@ -10,9 +10,11 @@ on:
   push:
     branches:
       - test
+      - main
 
 jobs:
   test:
+    name: Tests and Build
     runs-on: ubuntu-latest
     env:
       BETTERSTACK_LOG_PUSH: "false"
@@ -50,6 +52,34 @@ jobs:
 
     env:
       DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      BETTERSTACK_LOG_PUSH: "false"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply Pending Prisma Migrations
+        run: npx prisma migrate deploy
+
+  migrate-main-db:
+    name: Apply Main Database Migrations
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+
+    environment: production
+
+    env:
+      DATABASE_URL: ${{ secrets.MAIN_DATABASE_URL }}
       BETTERSTACK_LOG_PUSH: "false"
 
     steps:
