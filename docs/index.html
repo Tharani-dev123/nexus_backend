@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payroll &amp; Tax Declaration API — Documentation</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-alt: #161922;
+    --bg-card: #1c2029;
+    --border: #2a2f3a;
+    --text: #d7dbe3;
+    --text-dim: #9aa3b2;
+    --accent: #4f8cff;
+    --accent-soft: #1d2a47;
+    --green: #3fb950;
+    --amber: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --mono: "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--bg-alt);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0;
+  }
+  .content {
+    flex: 1;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 56px 120px;
+    min-width: 0;
+  }
+
+  /* Sidebar */
+  .brand { padding: 0 24px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .brand h1 { font-size: 16px; margin: 0 0 4px; color: #fff; }
+  .brand span { font-size: 12px; color: var(--text-dim); }
+  .nav-group { margin-bottom: 8px; }
+  .nav-group-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-dim); padding: 10px 24px 4px; font-weight: 600;
+  }
+  .nav a {
+    display: block; padding: 6px 24px; color: var(--text-dim);
+    font-size: 13.5px; border-left: 2px solid transparent;
+  }
+  .nav a:hover { color: var(--text); background: rgba(255,255,255,.02); text-decoration: none; }
+  .nav a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-soft); }
+
+  /* Typography */
+  h2 { font-size: 28px; margin: 56px 0 8px; padding-top: 16px; color: #fff; font-weight: 650; }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: 20px; margin: 36px 0 10px; color: #fff; font-weight: 600; }
+  h4 { font-size: 16px; margin: 24px 0 8px; color: #eceef2; }
+  p { margin: 10px 0; color: var(--text); }
+  .lead { font-size: 17px; color: var(--text-dim); }
+  ul, ol { padding-left: 22px; }
+  li { margin: 4px 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+  code {
+    font-family: var(--mono); font-size: 13px;
+    background: var(--bg-card); padding: 2px 6px; border-radius: 4px;
+    border: 1px solid var(--border); color: var(--purple);
+  }
+  pre {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; overflow-x: auto; margin: 14px 0;
+  }
+  pre code { background: none; border: none; padding: 0; color: var(--text); font-size: 13px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a2540, #14171f);
+    border: 1px solid var(--border); border-radius: 12px;
+    padding: 36px 40px; margin-bottom: 12px;
+  }
+  .hero h2 { margin: 0 0 12px; padding: 0; font-size: 34px; }
+  .badges { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge {
+    font-family: var(--mono); font-size: 12px; padding: 4px 10px;
+    border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  /* Cards grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 20px 0; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px;
+  }
+  .card h4 { margin: 0 0 6px; font-size: 15px; }
+  .card p { margin: 0; font-size: 13px; color: var(--text-dim); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--text-dim); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td code { font-size: 12.5px; }
+  tbody tr:hover { background: rgba(255,255,255,.015); }
+
+  /* HTTP method pills */
+  .m { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; min-width: 52px; text-align: center; }
+  .get { background: rgba(63,185,80,.15); color: var(--green); border: 1px solid rgba(63,185,80,.3); }
+  .post { background: rgba(79,140,255,.15); color: var(--accent); border: 1px solid rgba(79,140,255,.3); }
+  .patch { background: rgba(210,153,34,.15); color: var(--amber); border: 1px solid rgba(210,153,34,.3); }
+  .put { background: rgba(188,140,255,.15); color: var(--purple); border: 1px solid rgba(188,140,255,.3); }
+  .delete { background: rgba(248,81,73,.15); color: var(--red); border: 1px solid rgba(248,81,73,.3); }
+  td .path { font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+
+  /* Callouts */
+  .note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14px; }
+  .warn { border-left: 3px solid var(--amber); background: rgba(210,153,34,.08); padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 14px; }
+
+  /* Pills inline */
+  .tag { font-size: 11px; font-family: var(--mono); padding: 1px 7px; border-radius: 10px; border: 1px solid var(--border); color: var(--text-dim); background: var(--bg-card); }
+  .req { color: var(--red); }
+
+  /* Flow diagram */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0; }
+  .flow .step { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
+  .flow .arrow { color: var(--accent); font-weight: 700; }
+
+  .footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 13px; }
+
+  @media (max-width: 980px) {
+    .sidebar { display: none; }
+    .content { padding: 28px 20px 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Payroll &amp; Tax API</h1>
+      <span>Backend Technical Documentation</span>
+    </div>
+    <nav class="nav">
+      <div class="nav-group">
+        <div class="nav-group-title">Getting Started</div>
+        <a href="#overview">Overview</a>
+        <a href="#stack">Technology Stack</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#setup">Setup &amp; Installation</a>
+        <a href="#env">Environment Variables</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Platform</div>
+        <a href="#auth">Authentication</a>
+        <a href="#authz">Authorization</a>
+        <a href="#responses">Responses &amp; Errors</a>
+        <a href="#middleware">Middleware &amp; Logging</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Data Model</div>
+        <a href="#data-overview">Schema Overview</a>
+        <a href="#enums">Enumerations</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">API Reference</div>
+        <a href="#api-auth">Auth</a>
+        <a href="#api-user">User</a>
+        <a href="#api-company">Company</a>
+        <a href="#api-department">Department</a>
+        <a href="#api-employee">Employee</a>
+        <a href="#api-payroll">Payroll</a>
+        <a href="#api-tax">Tax (Admin)</a>
+        <a href="#api-metax">Tax (Self-Service)</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Domain Logic</div>
+        <a href="#salary-engine">Salary Structure Engine</a>
+        <a href="#payroll-flow">Payroll Processing</a>
+        <a href="#tax-engine">Tax Calculation Engine</a>
+        <a href="#tax-lifecycle">Declaration Lifecycle</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <main class="content">
+
+    <!-- HERO -->
+    <section class="hero" id="overview">
+      <h2>Payroll &amp; Tax Declaration API</h2>
+      <p class="lead">A multi-tenant backend service for managing company payroll runs, salary structures,
+      employee records, and India-style income-tax declarations (Old &amp; New regimes) with an admin
+      approval workflow and employee self-service portal.</p>
+      <div class="badges">
+        <span class="badge">Node.js</span>
+        <span class="badge">Express 5</span>
+        <span class="badge">TypeScript</span>
+        <span class="badge">Prisma 7</span>
+        <span class="badge">PostgreSQL</span>
+        <span class="badge">JWT Auth</span>
+        <span class="badge">AWS S3 + SES</span>
+        <span class="badge">v1.22.0</span>
+      </div>
+    </section>
+
+    <h3>What this service does</h3>
+    <p>The platform is organized around <strong>companies</strong>. An authenticated user creates a company
+    and becomes its <em>root user</em>. Within that company they manage departments, employees, salary
+    structures and monthly payroll. Employees (and admins) then file annual tax declarations that the engine
+    computes against configurable tax-regime slabs.</p>
+
+    <div class="grid">
+      <div class="card"><h4>👤 Identity &amp; Auth</h4><p>Sign-up, email verification, JWT access/refresh tokens, multi-device session management, password reset.</p></div>
+      <div class="card"><h4>🏢 Org Management</h4><p>Companies, departments and employees with role-based and company-scoped access control.</p></div>
+      <div class="card"><h4>💰 Payroll</h4><p>Spreadsheet upload, parsing &amp; validation, payroll runs/entries, salary-structure projection, pay statements.</p></div>
+      <div class="card"><h4>🧾 Tax Declarations</h4><p>Self-service investment declaration, Old/New regime computation, proof uploads, admin approval workflow, Excel exports.</p></div>
+    </div>
+
+    <hr/>
+
+    <!-- TECH STACK -->
+    <h2 id="stack">Technology Stack</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Runtime</td><td><code>Node.js</code> (ESM, <code>"type": "module"</code>)</td><td>Server runtime</td></tr>
+        <tr><td>Language</td><td><code>TypeScript 5.9</code> (ES2022, nodenext)</td><td>Type-safe source, compiled to <code>dist/</code></td></tr>
+        <tr><td>Web framework</td><td><code>Express 5</code></td><td>HTTP routing &amp; middleware</td></tr>
+        <tr><td>ORM</td><td><code>Prisma 7</code> + <code>@prisma/adapter-pg</code></td><td>Type-safe DB access &amp; migrations</td></tr>
+        <tr><td>Database</td><td><code>PostgreSQL</code></td><td>Primary datastore</td></tr>
+        <tr><td>Validation</td><td><code>Zod 4</code></td><td>Request body/query/param validation</td></tr>
+        <tr><td>Auth</td><td><code>jsonwebtoken</code>, <code>bcrypt</code></td><td>JWT issuance, password hashing</td></tr>
+        <tr><td>Security</td><td><code>helmet</code>, <code>cors</code>, <code>cookie-parser</code></td><td>Headers, CORS, cookies</td></tr>
+        <tr><td>Cloud</td><td><code>@aws-sdk/client-s3</code>, <code>client-sesv2</code></td><td>File storage &amp; transactional email</td></tr>
+        <tr><td>Spreadsheets</td><td><code>exceljs</code></td><td>Payroll upload parsing &amp; exports</td></tr>
+        <tr><td>Email</td><td><code>nodemailer</code> (MIME) over SES</td><td>Templated emails with embedded media</td></tr>
+        <tr><td>Logging</td><td><code>winston</code>, <code>morgan</code>, <code>@logtail</code> (BetterStack)</td><td>Structured + request logging</td></tr>
+        <tr><td>Dev tooling</td><td><code>nodemon</code>, <code>tsx</code></td><td>Watch-mode dev &amp; seed execution</td></tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <!-- ARCHITECTURE -->
+    <h2 id="architecture">Architecture</h2>
+    <p>The codebase follows a strict <strong>layered architecture</strong>. Each HTTP request flows through
+    well-defined layers, keeping HTTP concerns, business logic and persistence cleanly separated.</p>
+
+    <div class="flow">
+      <span class="step">Route</span><span class="arrow">→</span>
+      <span class="step">Middleware</span><span class="arrow">→</span>
+      <span class="step">Controller</span><span class="arrow">→</span>
+      <span class="step">Service</span><span class="arrow">→</span>
+      <span class="step">Repository</span><span class="arrow">→</span>
+      <span class="step">Prisma / DB</span>
+    </div>
+
+    <table>
+      <thead><tr><th>Layer</th><th>Directory</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr><td>Routes</td><td><code>src/routes/</code></td><td>Path definitions, middleware chains, schema binding</td></tr>
+        <tr><td>Middleware</td><td><code>src/middleware/</code></td><td>Auth, company authorization, validation, request context</td></tr>
+        <tr><td>Controllers</td><td><code>src/controller/</code></td><td>Parse request, call services, format response</td></tr>
+        <tr><td>Services</td><td><code>src/services/</code></td><td>Business logic (auth, payroll, tax, email, AWS)</td></tr>
+        <tr><td>Repositories</td><td><code>src/database/</code></td><td>Prisma queries; accept optional <code>tx</code> for transactions</td></tr>
+        <tr><td>Schemas</td><td><code>src/schemas/</code></td><td>Zod validation schemas per endpoint</td></tr>
+        <tr><td>Handlers</td><td><code>src/handlers/</code></td><td>Standardized responses &amp; global error mapping</td></tr>
+        <tr><td>Config / Constants</td><td><code>src/config/</code>, <code>src/constants/</code></td><td>Env config, JWT settings, tax/payroll constants</td></tr>
+        <tr><td>Utils</td><td><code>src/utils/</code></td><td>Crypto, dates, financial-year math, tax math</td></tr>
+        <tr><td>Schema (DB)</td><td><code>prisma/models/</code>, <code>prisma/enums/</code></td><td>Domain-split Prisma schema files</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Startup &amp; lifecycle</h3>
+    <ul>
+      <li><code>src/index.ts</code> — entry point; boots the HTTP server on <code>PORT</code> (default <code>3000</code>) and registers graceful shutdown.</li>
+      <li><code>src/server.ts</code> — Express app: <code>helmet</code> → <code>cors</code> → request-id → context → device-info → request logger → <code>cookie-parser</code> → body parsers → routes under <code>/api</code> → 404 &amp; error handlers.</li>
+      <li><code>src/utils/shutdown.ts</code> — handles <code>SIGINT</code>/<code>SIGTERM</code>, runs cleanup, force-exits after a 10s timeout, and traps uncaught exceptions / unhandled rejections.</li>
+    </ul>
+    <div class="note">All application routes are mounted under the <code>/api</code> prefix. Every full path in the API reference below is therefore <code>/api/&lt;module&gt;/&lt;route&gt;</code>.</div>
+
+    <hr/>
+
+    <!-- SETUP -->
+    <h2 id="setup">Setup &amp; Installation</h2>
+    <h4>Prerequisites</h4>
+    <ul>
+      <li>Node.js (ESM-capable LTS) and npm</li>
+      <li>A reachable PostgreSQL database</li>
+      <li>AWS credentials &amp; an S3 bucket (for payroll/proof uploads and SES email)</li>
+    </ul>
+    <h4>Install &amp; run</h4>
+    <pre><code># 1. Install dependencies
+npm install
+
+# 2. Configure environment (see Environment Variables)
+#    create a .env file in the project root
+
+# 3. Apply database migrations
+npx prisma migrate deploy        # production
+# or: npx prisma migrate dev     # development
+
+# 4. (optional) Seed reference data — tax regime config, payroll components
+npx tsx prisma/seed.ts
+
+# 5. Run in watch mode for development
+npm run dev
+
+# 6. Build & start for production
+npm run build      # tsc -> dist/
+npm run start      # tsc && node ./dist/index.js</code></pre>
+
+    <table>
+      <thead><tr><th>Script</th><th>Command</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>npm run dev</code></td><td><code>nodemon</code></td><td>Watch <code>src/</code>, recompile &amp; restart</td></tr>
+        <tr><td><code>npm run build</code></td><td><code>tsc</code></td><td>Compile TypeScript to <code>dist/</code></td></tr>
+        <tr><td><code>npm run start</code></td><td><code>tsc &amp;&amp; node ./dist/index.js</code></td><td>Build then run</td></tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <!-- ENV -->
+    <h2 id="env">Environment Variables</h2>
+    <p>Configuration is loaded through <code>src/config/</code>. Variables marked <span class="req">required</span>
+    have no safe default; the rest fall back to development-friendly defaults.</p>
+    <table>
+      <thead><tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>DATABASE_URL</code></td><td><span class="req">yes</span></td><td>—</td><td>PostgreSQL connection string</td></tr>
+        <tr><td><code>PORT</code></td><td>no</td><td><code>3000</code></td><td>HTTP listen port</td></tr>
+        <tr><td><code>SERVICE_NAME</code></td><td>no</td><td><code>Auth</code></td><td>Service display name in logs</td></tr>
+        <tr><td><code>NODE_ENV</code></td><td>no</td><td><code>development</code></td><td>Runtime environment</td></tr>
+        <tr><td><code>CORS_ORIGIN</code></td><td>no</td><td><code>http://localhost:5173</code></td><td>Allowed browser origin</td></tr>
+        <tr><td><code>TRUST_PROXY</code></td><td>no</td><td><code>false</code></td><td>Trust <code>X-Forwarded-*</code> headers</td></tr>
+        <tr><td><code>AUTH_ACCESS_TOKEN_SECRET</code></td><td><span class="req">prod</span></td><td>dev placeholder</td><td>JWT access-token signing secret</td></tr>
+        <tr><td><code>AUTH_REFRESH_TOKEN_SECRET</code></td><td><span class="req">prod</span></td><td>dev placeholder</td><td>JWT refresh-token signing secret</td></tr>
+        <tr><td><code>AWS_REGION</code></td><td>no</td><td><code>us-east-1</code></td><td>AWS region</td></tr>
+        <tr><td><code>FCX_AWS_ACCESS_KEY</code></td><td><span class="req">aws</span></td><td>—</td><td>AWS access key ID</td></tr>
+        <tr><td><code>FCX_AWS_ACCESS_KEY_SECRET</code></td><td><span class="req">aws</span></td><td>—</td><td>AWS secret access key</td></tr>
+        <tr><td><code>FCX_S3_BUCKET</code></td><td><span class="req">aws</span></td><td>—</td><td>S3 bucket for uploads &amp; documents</td></tr>
+        <tr><td><code>TRANSACTIONAL_DOMAIN_EMAIL</code></td><td>no</td><td>—</td><td>From-address for SES email</td></tr>
+        <tr><td><code>BETTERSTACK_TOKEN</code></td><td>cond.</td><td>—</td><td>BetterStack / Logtail ingestion token</td></tr>
+        <tr><td><code>BETTERSTACK_URL</code></td><td>cond.</td><td>—</td><td>BetterStack ingestion endpoint</td></tr>
+        <tr><td><code>BETTERSTACK_LOG_PUSH</code></td><td>no</td><td><code>true</code></td><td>Toggle remote log shipping</td></tr>
+        <tr><td><code>CONSOLE_LOGGING</code></td><td>no</td><td><code>true</code></td><td>Toggle console log output</td></tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <!-- AUTH -->
+    <h2 id="auth">Authentication</h2>
+    <p>The service uses a <strong>dual-token JWT</strong> scheme: a short-lived access token for API calls and a
+    long-lived, database-backed refresh token for session continuity and revocation.</p>
+
+    <table>
+      <thead><tr><th>Token</th><th>Lifetime</th><th>Storage</th><th>Payload</th></tr></thead>
+      <tbody>
+        <tr><td>Access token</td><td>12 hours (43,200s)</td><td>Client only (Bearer header)</td><td><code>user_id</code>, <code>company_id?</code>, <code>rftoken_id</code>, <code>expiresTime</code></td></tr>
+        <tr><td>Refresh token</td><td>30 days (2,592,000s)</td><td>SHA-256 hash in <code>RefreshToken</code> table</td><td><code>user_id</code>, <code>type: "refresh"</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>How it works</h4>
+    <ul>
+      <li><strong>Login</strong> validates the password (bcrypt) and the <code>isEmailVerified</code> flag, then issues both tokens. The refresh token's hash is persisted; the access token carries a reference (<code>rftoken_id</code>) to that DB row.</li>
+      <li><strong>Every protected request</strong> passes through <code>auth.middleware.ts</code>: the Bearer access token is verified, its <code>rftoken_id</code> is checked against the DB to confirm the session has not been revoked, and the user (plus company, if any) is attached to <code>req.user</code> / <code>req.company</code>.</li>
+      <li><strong>Refreshing</strong> (<code>/auth/refresh-access-token</code>) verifies the refresh JWT, looks up its hash, validates it is unexpired and unrevoked, extends its expiry, and mints a new access token.</li>
+      <li><strong>Logout</strong> revokes the current refresh token by setting <code>revokedAt</code>; <strong>logout-all-devices</strong> revokes every active token for the user.</li>
+    </ul>
+    <div class="note">Pass the access token as <code>Authorization: Bearer &lt;token&gt;</code> on all routes except the public auth endpoints.</div>
+
+    <h3 id="authz">Authorization</h3>
+    <p>Beyond authentication, two company-scoped guards control access. Most non-auth modules require a
+    <code>companyId</code> query parameter that is validated against the caller's access.</p>
+    <table>
+      <thead><tr><th>Guard</th><th>Enforces</th></tr></thead>
+      <tbody>
+        <tr><td><code>authenticateUser</code></td><td>Valid, non-revoked access token; populates <code>req.user</code></td></tr>
+        <tr><td><code>authorizeCompanyAccess</code></td><td>Caller is the company's root user <em>or</em> a member of the company (via <code>companyId</code>)</td></tr>
+        <tr><td><code>verifyCompanyRootAccess</code></td><td>Caller is the company's <strong>root user</strong> — required for mutating/admin actions</td></tr>
+      </tbody>
+    </table>
+    <p>Roles are modeled by the <code>UserRole</code> enum: <code>OWNER</code>, <code>ADMIN</code>, <code>HR</code>, <code>EMPLOYEE</code>.</p>
+
+    <hr/>
+
+    <!-- RESPONSES -->
+    <h2 id="responses">Responses &amp; Error Handling</h2>
+    <p>All responses share a consistent envelope produced by <code>src/handlers/serverResponse.handler.ts</code>.</p>
+    <h4>Success</h4>
+    <pre><code>// data payload
+{ "success": true, "data": { /* ... */ } }
+
+// message only
+{ "success": true, "message": "Operation completed" }</code></pre>
+    <h4>Error</h4>
+    <pre><code>{ "success": false, "error": { "message": "Human readable reason", /* ...metadata */ } }</code></pre>
+
+    <p>The global <code>errorHandler</code> maps known failures to clean HTTP responses:</p>
+    <table>
+      <thead><tr><th>Source</th><th>Handling</th></tr></thead>
+      <tbody>
+        <tr><td><code>AppError</code> (custom)</td><td>Uses its <code>status</code> + optional <code>data</code>; server-only logging metadata is stripped from the response</td></tr>
+        <tr><td>Zod validation</td><td><code>400 Bad Request</code> with field-level messages</td></tr>
+        <tr><td>Prisma known errors (P2000–P2037)</td><td>Mapped to friendly messages — e.g. <code>P2002</code> → duplicate, <code>P2003</code> → FK violation, <code>P2025</code> → not found</td></tr>
+        <tr><td>Unhandled</td><td>Logged and returned as generic <code>500</code></td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><code>200 / 201</code></td><td>Success / created</td></tr>
+        <tr><td><code>400</code></td><td>Validation error</td></tr>
+        <tr><td><code>401</code></td><td>Missing/invalid/expired token</td></tr>
+        <tr><td><code>403</code></td><td>Authenticated but not authorized for the company/resource</td></tr>
+        <tr><td><code>404</code></td><td>Resource not found</td></tr>
+        <tr><td><code>409</code></td><td>Conflict (duplicate code/name, existing payroll run for period)</td></tr>
+        <tr><td><code>500</code></td><td>Unhandled server error</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="middleware">Middleware, Logging &amp; Integrations</h3>
+    <ul>
+      <li><strong>Request context</strong> — <code>AsyncLocalStorage</code> carries <code>request_id</code>, IP, and (after auth) <code>user_id</code> / <code>company_id</code> through async calls for correlated logs.</li>
+      <li><strong>Device info</strong> — <code>ua-parser-js</code> extracts browser/OS/device for session and audit context.</li>
+      <li><strong>Logging</strong> — Winston (JSON, with stack traces) plus Morgan HTTP logs; optionally shipped to BetterStack/Logtail. Console output is colorized.</li>
+      <li><strong>AWS S3</strong> — <code>getObject</code> / <code>deleteObject</code> back payroll spreadsheet ingestion and tax-proof document storage.</li>
+      <li><strong>AWS SES</strong> — transactional email built as MIME via Nodemailer (with CID-embedded social-media images) and sent through SES v2.</li>
+      <li><strong>In-memory cache</strong> — a small TTL cache backs email-verification and forgot-password OTP flows (5-minute expiry).</li>
+      <li><strong>Audit log</strong> — the <code>AuditLog</code> model records actor, action, entity, old/new values, IP and user-agent.</li>
+    </ul>
+
+    <hr/>
+
+    <!-- DATA MODEL -->
+    <h2 id="data-overview">Data Model</h2>
+    <p>The schema is split by domain across <code>prisma/models/</code>. Provider: <strong>PostgreSQL</strong>;
+    generator: <strong>prisma-client</strong>. UUIDs are used for identity/auth entities and CUIDs for business entities.
+    <code>Decimal</code> columns are used throughout payroll/tax for monetary precision.</p>
+
+    <h3>Auth &amp; User</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th><th>Relations</th></tr></thead>
+      <tbody>
+        <tr><td><code>User</code></td><td>id, name, email <span class="tag">unique</span>, isEmailVerified, companyId?, userRole, deletedAt?</td><td>credential, employee, refreshTokens, payrollRuns, ownedCompanies, approvedTaxDeclarations, auditLogs</td></tr>
+        <tr><td><code>Credential</code></td><td>id, type, passwordHash, userId <span class="tag">unique</span></td><td>user (cascade delete)</td></tr>
+        <tr><td><code>RefreshToken</code></td><td>id, tokenHash <span class="tag">unique</span>, expiresAt, revokedAt?, userId</td><td>user (cascade); indexed on userId, expiresAt</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Company &amp; Organization</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th><th>Relations</th></tr></thead>
+      <tbody>
+        <tr><td><code>Company</code></td><td>id, name, email?, phone?, address?, website?, financialYearStartMonth <span class="tag">def 4</span>, primaryCountryCode?, rootUserId?, deletedAt?</td><td>users, rootUser, employees, departments, payrollRuns, payrollComponents, payrollSetting</td></tr>
+        <tr><td><code>Department</code></td><td>id, companyId, name, deletedAt?</td><td>company, employees · <span class="tag">unique(companyId,name,deletedAt)</span></td></tr>
+        <tr><td><code>PayrollSetting</code></td><td>companyId <span class="tag">unique</span>, PF %/ceiling, ESI %/ceiling, toggles, ptState?, professionalTaxAmount?</td><td>company (1:1)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Employee &amp; Salary</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th><th>Relations</th></tr></thead>
+      <tbody>
+        <tr><td><code>Employee</code></td><td>id, companyId, userId? <span class="tag">unique</span>, employeeCode <span class="tag">unique</span>, names, contact, PAN/Aadhaar, statutory (UAN/PF/ESI), bank, status <span class="tag">def ACTIVE</span></td><td>company, user, department, payrollEntries, taxDeclarations, salaryStructures, inviteTokens</td></tr>
+        <tr><td><code>InviteToken</code></td><td>id, employeeId, tokenHash, expiresAt, usedAt?</td><td>employee</td></tr>
+        <tr><td><code>SalaryStructure</code></td><td>id, employeeId, annualCTC, effectiveFrom, effectiveTo?, isActive</td><td>employee, components</td></tr>
+        <tr><td><code>SalaryStructureComponent</code></td><td>id, salaryStructureId, componentId, calculationType, value?, formula?, computedAnnualAmount?, displayOrder</td><td>salaryStructure (cascade), component · <span class="tag">unique(structure,component)</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Payroll</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th><th>Relations</th></tr></thead>
+      <tbody>
+        <tr><td><code>PayrollComponent</code></td><td>id, companyId, name, code, type <span class="tag">EARNING/DEDUCTION</span>, defaultCalculationType, isTaxable, isStatutory, displayOrder, isActive</td><td>company, structureComponents, entryComponents · <span class="tag">unique(companyId,code)</span></td></tr>
+        <tr><td><code>PayrollRun</code></td><td>id, companyId, month, year, sourceFileKey?, uploadedById, uploadType, status <span class="tag">def PROCESSED</span>, processedAt?, remarks?</td><td>company, uploadedBy, entries · <span class="tag">unique(company,month,year,uploadType)</span></td></tr>
+        <tr><td><code>PayrollEntry</code></td><td>id, payrollRunId, employeeId, day counts, grossSalary, pf/esi/employerPf/employerEsi, incomeTax, professionalTax, otherDeduction, totalDeductions, netPay, isLocked</td><td>payrollRun, employee, components, payslip · <span class="tag">unique(run,employee)</span></td></tr>
+        <tr><td><code>PayrollEntryComponent</code></td><td>id, payrollEntryId, componentId?, code, name, type, amount</td><td>payrollEntry (cascade), component? · <span class="tag">unique(entry,code)</span></td></tr>
+        <tr><td><code>Payslip</code></td><td>id, payrollEntryId <span class="tag">unique</span>, emailStatus, s3Key, version, emailedAt?</td><td>payrollEntry (1:1)</td></tr>
+        <tr><td><code>GeneratedDocument</code></td><td>id, employeeId, type <span class="tag">PAYSLIP/FORM16/DECLARATION_PDF</span>, s3Key, periodLabel?, emailedAt?</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tax</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th><th>Relations</th></tr></thead>
+      <tbody>
+        <tr><td><code>TaxDeclaration</code></td><td>id, employeeId, financialYearStart/End, regime <span class="tag">def OLD</span>, status <span class="tag">def DRAFT</span>, full salary buckets, HRA/standard deduction, computed tax fields (taxableIncome, taxBeforeRebate, rebate87A, surcharge, cess, totalTaxPayable, tdsDeducted, balanceTaxPayable), rent/landlord, approval &amp; submission metadata</td><td>employee, items, approvedBy · <span class="tag">unique(employee,fyStart,fyEnd)</span></td></tr>
+        <tr><td><code>TaxDeclarationItem</code></td><td>id, declarationId, section, description?, referenceNo?, amount, proofDocKey?, metadata?</td><td>declaration · indexed on declarationId</td></tr>
+        <tr><td><code>TaxRegimeConfig</code></td><td>id, slabs (JSON), surchargeSlabs (JSON), cessRate, fyStart/End, regime, standardDeduction, 80C/80CCD1B limits, rebate87A limit &amp; threshold</td><td>— · <span class="tag">unique(fyStart,fyEnd,regime)</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Audit</h3>
+    <table>
+      <thead><tr><th>Model</th><th>Key fields</th></tr></thead>
+      <tbody>
+        <tr><td><code>AuditLog</code></td><td>id, userId, action, entityType, entityId, oldValue?, newValue?, companyId, ipAddress?, userAgent?, createdAt</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="enums">Enumerations</h3>
+    <table>
+      <thead><tr><th>Enum</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td><code>UserRole</code></td><td>OWNER, ADMIN, HR, EMPLOYEE</td></tr>
+        <tr><td><code>CredentialType</code></td><td>EMAIL</td></tr>
+        <tr><td><code>EmployeeStatus</code></td><td>ACTIVE, INACTIVE, RESIGNED, TERMINATED</td></tr>
+        <tr><td><code>PayrollRunStatus</code></td><td>DRAFT, PROCESSING, PROCESSED, FINALISED, FAILED</td></tr>
+        <tr><td><code>PayrollUploadType</code></td><td>SALARY, INCENTIVE, OTHER</td></tr>
+        <tr><td><code>PayrollComponentType</code></td><td>EARNING, DEDUCTION</td></tr>
+        <tr><td><code>ComponentCalculationType</code></td><td>FIXED, PERCENTAGE_OF_CTC, PERCENTAGE_OF_BASIC, PERCENTAGE_OF_GROSS, BALANCING, FORMULA</td></tr>
+        <tr><td><code>PayslipEmailStatus</code></td><td>PENDING, SENT, FAILED</td></tr>
+        <tr><td><code>TaxRegime</code></td><td>OLD, NEW</td></tr>
+        <tr><td><code>DeclarationStatus</code></td><td>DRAFT, SUBMITTED, APPROVED, REJECTED</td></tr>
+        <tr><td><code>TaxSection</code></td><td>SECTION_80C, SECTION_80CCD, SECTION_80CCD_1B, SECTION_80D, SECTION_80DD, SECTION_80DDB, SECTION_80E, SECTION_80G, HRA, HOME_LOAN, NPS, OTHER</td></tr>
+        <tr><td><code>DocumentType</code></td><td>PAYSLIP, FORM16, DECLARATION_PDF</td></tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <!-- ============ API REFERENCE ============ -->
+    <h2>API Reference</h2>
+    <p>All paths are prefixed with <code>/api</code>. Company-scoped routes require a <code>companyId</code> query
+    parameter and the <code>authorizeCompanyAccess</code> guard. <code>validateInput(schema)</code> denotes Zod validation.</p>
+
+    <h3 id="api-auth">Authentication <span class="tag">/api/auth</span></h3>
+    <p>Public unless noted. No company scope.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Guards</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/signup</span></td><td>Register a new user</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/login</span></td><td>Authenticate; returns access + refresh tokens</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/logout</span></td><td>Revoke current session</td><td>auth, validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/logout-all-devices</span></td><td>Revoke all sessions for the user</td><td>auth</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/send-verification-email</span></td><td>Send email-verification OTP/link</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/verify-email</span></td><td>Verify email address</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/forgot-password</span></td><td>Start password-reset flow</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/reset-password</span></td><td>Complete password reset</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/request-login-otp</span></td><td>Email a one-time login code to a passwordless (employee) account</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/verify-login-otp</span></td><td>Verify the code; returns access + refresh tokens (<code>user</code> incl. <code>companyId</code>, <code>userRole</code>)</td><td>validate</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/auth/refresh-access-token</span></td><td>Issue a fresh access token</td><td>validate</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-user">User <span class="tag">/api/user</span></h3>
+    <p>All routes require <code>authenticateUser</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Body / Query</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/user/me</span></td><td>Current user profile</td><td>—</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/user/change-password</span></td><td>Change password (verifies current)</td><td><code>currentPassword</code>, <code>newPassword</code></td></tr>
+        <tr><td><span class="m put">PUT</span></td><td><span class="path">/user/update-me</span></td><td>Update profile</td><td><code>name?</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/user/delete-me</span></td><td>Delete account (verifies password)</td><td><code>password</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/user/get-active-sessions</span></td><td>List active sessions</td><td>—</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/user/revoke-session</span></td><td>Revoke a specific session</td><td><code>sessionId</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-company">Company <span class="tag">/api/company</span></h3>
+    <p>Requires <code>authenticateUser</code>. Mutations additionally require <code>authorizeCompanyAccess</code> + <code>verifyCompanyRootAccess</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Guards / Body</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/company/create-company</span></td><td>Create company; caller becomes root user</td><td><code>name</code>, <code>email?</code>, <code>phone?</code>, <code>address?</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/company/get-company</span></td><td>Fetch company by id</td><td>companyAccess</td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/company/update-company</span></td><td>Update company fields</td><td>root · <code>name? email? phone? address?</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/company/delete-company</span></td><td>Soft-delete company</td><td>root</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-department">Department <span class="tag">/api/department</span></h3>
+    <p>Requires <code>authenticateUser</code> + <code>authorizeCompanyAccess</code>. Mutations require <code>verifyCompanyRootAccess</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/department/create-department</span></td><td>Create department</td><td>root · <code>name</code> (unique per company, ≤100)</td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/department/get-departments</span></td><td>List company departments</td><td>—</td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/department/get-department-by-id</span></td><td>Fetch one department</td><td>—</td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/department/update-department</span></td><td>Rename department</td><td>root · <code>name?</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/department/delete-department</span></td><td>Soft-delete department</td><td>root</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-employee">Employee <span class="tag">/api/employee</span></h3>
+    <p>Requires <code>authenticateUser</code> + <code>authorizeCompanyAccess</code>. Mutations require <code>verifyCompanyRootAccess</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/employee/create-employee</span></td><td>Create employee</td><td>root · <code>employeeCode</code> (unique), <code>firstName</code>, + optional details</td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/employee/get-employees</span></td><td>Paginated list</td><td><code>page, limit, search, departmentId?, status?</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/employee/get-employee</span></td><td>Fetch one employee</td><td>—</td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/employee/update-employee</span></td><td>Update employee (all fields optional)</td><td>root</td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/employee/Status-update-employee</span></td><td>Change employee status</td><td>root · <code>status</code> enum</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/employee/enable-login</span></td><td>Enable passwordless login for one employee (creates account + emails them)</td><td>root · <code>id</code></td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/employee/enable-login-all</span></td><td>Enable login for all eligible employees; returns enabled/skipped summary</td><td>root</td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/employee/disable-login</span></td><td>Disable one employee's login (revokes sessions, removes account)</td><td>root · <code>id</code></td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/employee/disable-login-all</span></td><td>Disable login for all employees that have one; returns summary</td><td>root</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-payroll">Payroll <span class="tag">/api/payroll</span></h3>
+    <p>Requires <code>authenticateUser</code> + <code>authorizeCompanyAccess</code>. Mutations require <code>verifyCompanyRootAccess</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/payroll/upload</span></td><td>Ingest a payroll spreadsheet from S3, parse &amp; create a run + entries</td><td>root · <code>year, month, uploadType, sourceFileKey, replace?</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/payroll/runs</span></td><td>List runs (filter by year/month/type)</td><td>—</td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/payroll/run</span></td><td>Fetch a run with entries &amp; components</td><td><code>runId</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/payroll/run</span></td><td>Delete a run (cascades entries)</td><td>root · <code>runId</code></td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/payroll/entry</span></td><td>Edit an entry's components &amp; day counts</td><td>root · <code>entryId, components[], days...</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/payroll/entry</span></td><td>Delete a single entry</td><td>root · <code>entryId</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/payroll/pay-statement</span></td><td>Year-wise actual + projected pay statement</td><td><code>employeeId, year, uploadType?</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-tax">Tax — Admin <span class="tag">/api/tax</span></h3>
+    <p>Requires <code>authenticateUser</code> + <code>authorizeCompanyAccess</code>. Approval/proof mutations require <code>verifyCompanyRootAccess</code>.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/tax/declarations</span></td><td>List declarations (tracking rows)</td><td><code>year?, status?, employeeId?</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/tax/summary</span></td><td>Company-year aggregate grid</td><td><code>year</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/tax/declaration</span></td><td>Full working sheet for one declaration</td><td><code>declarationId</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/tax/export/tracking</span></td><td>Excel export of tracking sheet</td><td><code>year</code></td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/tax/export/declaration</span></td><td>Excel export of a declaration</td><td><code>declarationId</code></td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/tax/approve</span></td><td>Approve a SUBMITTED declaration</td><td>root · <code>declarationId</code></td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/tax/reject</span></td><td>Reject with reason → back to DRAFT</td><td>root · <code>declarationId, reason</code></td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/tax/proof</span></td><td>Upsert a declaration item / proof</td><td>root · <code>itemId?, section?, amount?, proofDocKey?</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/tax/proof</span></td><td>Remove a proof file or whole item</td><td>root · <code>itemId, removeItem?</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="api-metax">Tax — Employee Self-Service <span class="tag">/api/me/tax</span></h3>
+    <p>Requires <code>authenticateUser</code> only — scoped to the caller's own linked employee record.</p>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/me/tax/declaration</span></td><td>Get my declaration (seeds a DRAFT &amp; refreshes salary)</td><td><code>year, regime?</code></td></tr>
+        <tr><td><span class="m patch">PATCH</span></td><td><span class="path">/me/tax/declaration</span></td><td>Update regime, rent, loan &amp; investment items</td><td><code>year, items[], ...</code></td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/me/tax/submit</span></td><td>Freeze salary &amp; submit for approval</td><td><code>year</code></td></tr>
+        <tr><td><span class="m post">POST</span></td><td><span class="path">/me/tax/proof</span></td><td>Attach a proof to an item</td><td><code>declarationId, itemId, ...</code></td></tr>
+        <tr><td><span class="m delete">DELETE</span></td><td><span class="path">/me/tax/proof</span></td><td>Remove my proof / item</td><td><code>declarationId, itemId, removeItem?</code></td></tr>
+      </tbody>
+    </table>
+
+    <h4>System</h4>
+    <table>
+      <thead><tr><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/api/</span></td><td>Welcome message</td></tr>
+        <tr><td><span class="m get">GET</span></td><td><span class="path">/api/health</span></td><td>Health check</td></tr>
+      </tbody>
+    </table>
+
+    <hr/>
+
+    <!-- ============ DOMAIN LOGIC ============ -->
+    <h2 id="salary-engine">Salary Structure Engine</h2>
+    <p>A salary structure maps an employee's <strong>annual CTC</strong> onto a set of components. Because some
+    components depend on others (HRA on Basic, balancing on everything), the engine
+    (<code>calculateSalaryStructure</code>) resolves them in a fixed multi-pass order.</p>
+    <div class="flow">
+      <span class="step">1 · FIXED / %CTC / %GROSS</span><span class="arrow">→</span>
+      <span class="step">2 · %BASIC</span><span class="arrow">→</span>
+      <span class="step">3 · FORMULA</span><span class="arrow">→</span>
+      <span class="step">4 · BALANCING</span><span class="arrow">→</span>
+      <span class="step">Deductions</span>
+    </div>
+    <table>
+      <thead><tr><th>Calculation type</th><th>Resolved as</th></tr></thead>
+      <tbody>
+        <tr><td><code>FIXED</code></td><td>A literal annual amount</td></tr>
+        <tr><td><code>PERCENTAGE_OF_CTC</code></td><td>% of annual CTC</td></tr>
+        <tr><td><code>PERCENTAGE_OF_BASIC</code></td><td>% of the resolved BASIC component</td></tr>
+        <tr><td><code>PERCENTAGE_OF_GROSS</code></td><td>% of resolved annual gross (used for deductions)</td></tr>
+        <tr><td><code>FORMULA</code></td><td>Expression referencing earlier component codes and CTC</td></tr>
+        <tr><td><code>BALANCING</code></td><td>CTC minus all other earnings (max one per structure; earnings only)</td></tr>
+      </tbody>
+    </table>
+    <p>Output is a <code>SalaryBreakdown</code>: per-component annual &amp; monthly amounts, annual/monthly gross,
+    annual deductions and net. Monthly figures are rounded to two decimals to avoid floating-point drift.
+    Validations enforce a positive CTC, a single balancing earning, and non-null values where required.</p>
+
+    <h2 id="payroll-flow">Payroll Processing</h2>
+    <p>Payroll is ingested from spreadsheets stored in S3. The flow turns a raw sheet into a validated,
+    itemized <code>PayrollRun</code>.</p>
+    <ol>
+      <li><strong>Fetch &amp; parse</strong> — <code>parsePayrollSheet</code> reads the Excel/CSV from S3, detects the header row (employee-code column + ≥2 component columns) and normalizes headers via a <code>COLUMN_MAP</code>.</li>
+      <li><strong>Resolve</strong> — component column codes map to master <code>PayrollComponent</code> ids; employee codes map to <code>Employee</code> ids. All codes are validated against the company roster.</li>
+      <li><strong>Derive</strong> — LOP = days − effective workdays; deductions are aggregated by type (PF, ESI, income tax, professional tax, other); gross/net are computed and cross-checked against any provided totals (mismatches surface as warnings).</li>
+      <li><strong>Persist</strong> — atomically create the <code>PayrollRun</code> + one <code>PayrollEntry</code> per employee with itemized <code>PayrollEntryComponent</code> rows. With <code>replace=true</code> an existing run for the same period is swapped; otherwise a duplicate period raises a 409 conflict.</li>
+    </ol>
+    <p>A <strong>pay statement</strong> (<code>payStatement</code>) returns a year-wise view that combines actual entries
+    with a projection for missing months. Projection basis is chosen in priority order:
+    <code>LAST_REGULAR_PAYROLL</code> (latest completed Regular payroll) &rarr; <code>STRUCTURE</code> (active salary structure) &rarr; <code>NONE</code>.
+    This annualized view feeds the tax engine.</p>
+
+    <h2 id="tax-engine">Tax Calculation Engine</h2>
+    <p><code>calculateTaxDeclaration</code> computes income tax for a declaration against a versioned
+    <code>TaxRegimeConfig</code> (slabs, surcharge bands, cess rate, caps) for the selected
+    financial year and regime.</p>
+    <ol>
+      <li><strong>Salary derivation</strong> — <code>deriveSalaryFromPayroll</code> folds pay-statement components into declared buckets (BASIC, HRA, conveyance, medical, special, communication, bonus, other) and extracts professional tax &amp; TDS.</li>
+      <li><strong>HRA exemption</strong> — least of: rent paid, 50% (metro) / 40% (non-metro) of gross, and 40% of basic.</li>
+      <li><strong>Standard deduction</strong> — regime-specific (e.g. ₹50k Old / ₹75k New).</li>
+      <li><strong>Chapter VI-A</strong> — items aggregated per section with statutory caps (80C ₹1.5L shared ceiling, 80CCD(1B) separate, etc.); HRA &amp; home-loan handled separately. Most deductions apply to the Old regime only.</li>
+      <li><strong>Taxable income</strong> — gross − exemptions − standard deduction − Chapter VI-A + other income.</li>
+      <li><strong>Tax</strong> — progressive slab tax, then surcharge by income band, then 4% cess.</li>
+      <li><strong>Rebate 87A</strong> — applied automatically when income is under the regime threshold.</li>
+      <li><strong>Balance payable</strong> — total tax − TDS already deducted.</li>
+    </ol>
+    <p>The result is persisted onto the <code>TaxDeclaration</code> and rendered by
+    <code>buildTaxWorkingSheet</code> into a JSON working sheet (Decimals coerced to numbers).</p>
+
+    <h2 id="tax-lifecycle">Declaration Lifecycle</h2>
+    <p>Each declaration moves through a small state machine. While <code>DRAFT</code>, salary figures are
+    auto-refreshed from payroll on every read so the employee always declares against current numbers.</p>
+    <div class="flow">
+      <span class="step">DRAFT</span><span class="arrow">→ submit →</span>
+      <span class="step">SUBMITTED</span><span class="arrow">→ approve →</span>
+      <span class="step">APPROVED</span>
+    </div>
+    <div class="flow">
+      <span class="step">SUBMITTED</span><span class="arrow">→ reject →</span>
+      <span class="step">REJECTED</span><span class="arrow">→ edit →</span>
+      <span class="step">DRAFT</span>
+    </div>
+    <table>
+      <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><code>DRAFT</code></td><td>Editable; salary refreshed on read; investment items fully replaceable (proofs carried forward FIFO)</td></tr>
+        <tr><td><code>SUBMITTED</code></td><td>Salary frozen at submission; awaits admin decision; edits blocked</td></tr>
+        <tr><td><code>APPROVED</code></td><td>Immutable; records approver &amp; timestamp</td></tr>
+        <tr><td><code>REJECTED</code></td><td>Carries a rejection reason; re-opening reverts it to DRAFT for resubmission</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Tax data (slabs, caps, standard deduction, rebate thresholds) is seeded per financial year &amp; regime via <code>TaxRegimeConfig</code>, so computations stay accurate as budgets change without code changes.</div>
+
+    <div class="footer">
+      <p>Generated technical documentation for the <strong>Payroll &amp; Tax Declaration</strong> backend service · v1.22.0.
+      Source of truth is the codebase under <code>src/</code> and <code>prisma/</code>.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Scroll-spy: highlight active nav link
+  const links = Array.from(document.querySelectorAll('.nav a'));
+  const map = new Map();
+  links.forEach(a => {
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) map.set(el, a);
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const link = map.get(entry.target);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px', threshold: 0 });
+  map.forEach((_, el) => observer.observe(el));
+</script>
+</body>
+</html>

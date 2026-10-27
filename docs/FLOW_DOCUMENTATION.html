@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Payroll &amp; Tax Declaration — Flow Documentation</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-alt: #161922;
+    --bg-card: #1c2029;
+    --border: #2a2f3a;
+    --text: #d7dbe3;
+    --text-dim: #9aa3b2;
+    --accent: #4f8cff;
+    --accent-soft: #1d2a47;
+    --green: #3fb950;
+    --amber: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --mono: "SF Mono", "Cascadia Code", Consolas, "Roboto Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--bg-alt);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 24px 0;
+  }
+  .content {
+    flex: 1;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 56px 120px;
+    min-width: 0;
+  }
+
+  .brand { padding: 0 24px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .brand h1 { font-size: 16px; margin: 0 0 4px; color: #fff; }
+  .brand p { font-size: 12px; color: var(--text-dim); margin: 0; }
+
+  .nav-group { padding: 8px 0; }
+  .nav-group .label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text-dim); padding: 8px 24px 4px; font-weight: 600;
+  }
+  .sidebar a {
+    display: block; padding: 6px 24px; color: var(--text-dim);
+    font-size: 13.5px; border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { color: var(--text); background: var(--bg-card); text-decoration: none; }
+
+  h2 {
+    font-size: 24px; color: #fff; margin: 56px 0 6px;
+    padding-top: 16px; scroll-margin-top: 24px;
+  }
+  h2:first-of-type { margin-top: 0; }
+  .section-sub { color: var(--text-dim); margin: 0 0 24px; font-size: 14.5px; }
+
+  .hero { border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 8px; }
+  .hero h1 { font-size: 30px; color: #fff; margin: 0 0 8px; }
+  .hero p { color: var(--text-dim); margin: 0; max-width: 700px; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0 8px;
+    overflow-x: auto;
+  }
+  .mermaid { display: flex; justify-content: center; }
+
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    padding: 12px 16px; margin: 16px 0; border-radius: 0 8px 8px 0;
+    font-size: 14px; color: var(--text);
+  }
+  .note strong { color: #fff; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 12px 0 0; font-size: 13px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; color: var(--text-dim); }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+
+  code {
+    font-family: var(--mono); font-size: 13px;
+    background: var(--bg-alt); border: 1px solid var(--border);
+    padding: 1px 6px; border-radius: 5px; color: var(--purple);
+  }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>Flow Documentation</h1>
+      <p>Payroll &amp; Tax Declaration</p>
+    </div>
+    <nav>
+      <div class="nav-group">
+        <div class="label">Diagrams</div>
+        <a href="#architecture">1 · Request Lifecycle</a>
+        <a href="#rbac">2 · Roles &amp; Access Control</a>
+        <a href="#signup">3 · Signup &amp; Verification</a>
+        <a href="#login">4 · Login &amp; Token Refresh</a>
+        <a href="#otp">5 · Passwordless Employee Login</a>
+        <a href="#staff">6 · Staff Invite</a>
+        <a href="#employee">7 · Employee Onboarding</a>
+        <a href="#payroll">8 · Payroll Processing</a>
+        <a href="#salary">9 · Salary Structure Engine</a>
+        <a href="#tax-lifecycle">10 · Tax Declaration Lifecycle</a>
+        <a href="#tax-flow">11 · Tax Self-Service &amp; Approval</a>
+      </div>
+      <div class="nav-group">
+        <div class="label">Reference</div>
+        <a href="API_DOCUMENTATION.md">API Documentation (text)</a>
+        <a href="FRONTEND_GUIDE.md">Frontend Guide</a>
+        <a href="index.html">API Reference (HTML)</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="hero">
+      <h1>Flow Documentation</h1>
+      <p>Visual flowcharts of how requests move through the Payroll &amp; Tax
+      Declaration backend — request lifecycle, authentication, payroll processing,
+      and the tax declaration workflow. Diagrams are rendered with Mermaid and were
+      verified against <code>src/routes</code> and <code>src/middleware</code> on
+      2026-06-20.</p>
+      <div class="legend">
+        <span><span class="swatch" style="background:#1d2a47;border:1px solid #4f8cff"></span> Process / step</span>
+        <span><span class="swatch" style="background:#10331c;border:1px solid #3fb950"></span> Success / terminal</span>
+        <span><span class="swatch" style="background:#3a1d1d;border:1px solid #f85149"></span> Error / reject</span>
+        <span><span class="swatch" style="background:#3a2f10;border:1px solid #d29922"></span> Decision</span>
+        <span><span class="swatch" style="background:#2a1d3a;border:1px solid #bc8cff"></span> External (S3 / SES)</span>
+      </div>
+    </div>
+
+    <!-- 1 -->
+    <h2 id="architecture">1 · Request Lifecycle</h2>
+    <p class="section-sub">Every API call flows through this layered pipeline. Middleware runs in order; any layer can short-circuit with an error envelope.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    C["Client Request<br/>Authorization: Bearer {token}"]:::proc
+    R["Express Router<br/>/api/*"]:::proc
+    A{"authenticateUser<br/>valid JWT?"}:::dec
+    CA{"authorizeCompanyAccess<br/>owns / belongs to companyId?"}:::dec
+    RA{"verifyCompanyRootAccess<br/>is company owner?"}:::dec
+    V{"validateInput<br/>Zod schema OK?"}:::dec
+    CTRL["Controller"]:::proc
+    SVC["Service<br/>business logic"]:::proc
+    REPO["Repository"]:::proc
+    DB[("Prisma → PostgreSQL")]:::ext
+    OK["serverResponse.handler<br/>{ success: true, data }"]:::ok
+    ERR["errors.handler<br/>{ success: false, error }"]:::err
+
+    C --> R --> A
+    A -- "401" --> ERR
+    A -- yes --> CA
+    CA -- "403" --> ERR
+    CA -- yes --> RA
+    RA -- "403 (write ops)" --> ERR
+    RA -- "yes / not required" --> V
+    V -- "400" --> ERR
+    V -- yes --> CTRL --> SVC --> REPO --> DB
+    DB --> OK
+    SVC -- "throws AppError" --> ERR
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+    <div class="note"><strong>Mount-level middleware:</strong> <code>/department</code>, <code>/employee</code>, <code>/payroll</code>, and <code>/tax</code> apply <code>authenticateUser&nbsp;+&nbsp;authorizeCompanyAccess</code> at the router. <code>/company</code> applies only <code>authenticateUser</code> at the mount, then <code>authorizeCompanyAccess</code> per route. <code>/me/tax</code> applies only <code>authenticateUser</code> (no companyId).</div>
+
+    <!-- 2 -->
+    <h2 id="rbac">2 · Roles &amp; Access Control</h2>
+    <p class="section-sub">Two authorization layers gate every company-scoped resource.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart LR
+    U["Authenticated User"]:::proc
+    Q{"Endpoint type?"}:::dec
+    READ["Read / list<br/>(GET)"]:::proc
+    WRITE["Create / Update / Delete<br/>Approve / Reject / Proof"]:::proc
+    SELF["Own resources<br/>/api/me/tax/*"]:::proc
+    L1{"authorizeCompanyAccess<br/>member of company?"}:::dec
+    L2{"verifyCompanyRootAccess<br/>OWNER (root) only"}:::dec
+    OK["Allowed"]:::ok
+    NO["403 Forbidden"]:::err
+
+    U --> Q
+    Q -- "company read" --> READ --> L1
+    Q -- "company write" --> WRITE --> L1
+    Q -- "self-service" --> SELF --> OK
+    L1 -- no --> NO
+    L1 -- "yes (read)" --> OK
+    L1 -- "yes (write)" --> L2
+    L2 -- "OWNER" --> OK
+    L2 -- "ADMIN / HR / EMPLOYEE" --> NO
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+      </pre>
+    </div>
+
+    <!-- 3 -->
+    <h2 id="signup">3 · Signup &amp; Email Verification</h2>
+    <p class="section-sub">Signup returns an access token but no refresh token. Email verification is a separate OTP step.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    S["POST /auth/signup<br/>{ name, email, password }"]:::proc
+    DUP{"Email exists?"}:::dec
+    C409["409 Conflict"]:::err
+    HASH["Hash password (bcrypt)<br/>create User + Credential"]:::proc
+    AT["Issue accessToken (12h)"]:::proc
+    R1["Return { user, accessToken }"]:::ok
+    SV["POST /auth/send-verification-email<br/>{ email }"]:::proc
+    SES["AWS SES sends 6-digit OTP"]:::ext
+    VE["POST /auth/verify-email<br/>{ email, otp }"]:::proc
+    VOK{"OTP valid &amp; unexpired?"}:::dec
+    DONE["isEmailVerified = true"]:::ok
+    FAIL["400 Invalid / expired OTP"]:::err
+
+    S --> DUP
+    DUP -- yes --> C409
+    DUP -- no --> HASH --> AT --> R1
+    R1 --> SV --> SES --> VE --> VOK
+    VOK -- yes --> DONE
+    VOK -- no --> FAIL
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+
+    <!-- 4 -->
+    <h2 id="login">4 · Login &amp; Token Refresh</h2>
+    <p class="section-sub">Login issues both tokens. The client refreshes the access token on 401 and retries once.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    L["POST /auth/login<br/>{ email, password }"]:::proc
+    VC{"Credentials valid?"}:::dec
+    E401["401 Unauthorized"]:::err
+    VER{"Email verified?"}:::dec
+    EV["400 Email not verified<br/>→ verify-email flow"]:::err
+    GEN["Generate refreshToken (30d)<br/>store token hash"]:::proc
+    GENA["Generate accessToken (12h)"]:::proc
+    RET["Return { user, accessToken, refreshToken }"]:::ok
+
+    CALL["Protected API call<br/>Bearer accessToken"]:::proc
+    EXP{"Access token expired?"}:::dec
+    USE["200 OK"]:::ok
+    RF["POST /auth/refresh-access-token<br/>{ refreshToken }"]:::proc
+    RFOK{"Refresh token valid?"}:::dec
+    NEWA["New accessToken → retry once"]:::ok
+    LOGIN["Clear tokens → redirect /login"]:::err
+
+    L --> VC
+    VC -- no --> E401
+    VC -- yes --> VER
+    VER -- no --> EV
+    VER -- yes --> GEN --> GENA --> RET
+    RET --> CALL --> EXP
+    EXP -- no --> USE
+    EXP -- "yes (401)" --> RF --> RFOK
+    RFOK -- yes --> NEWA
+    RFOK -- no --> LOGIN
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+      </pre>
+    </div>
+
+    <!-- 5 -->
+    <h2 id="otp">5 · Passwordless Employee Login (OTP)</h2>
+    <p class="section-sub">Employees have no password. An owner enables login per-employee or for the whole company at once (and can disable it again); employees then sign in with email + a single-use 6-digit code that expires in 10 minutes.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    EN["Owner enables login:<br/>POST /employee/enable-login (one)<br/>or /enable-login-all (whole company)"]:::proc
+    ACC["Create User account(s)<br/>link Employee.userId"]:::proc
+    MAIL["AWS SES emails employee"]:::ext
+    DIS["Owner disables login:<br/>POST /employee/disable-login (one)<br/>or /disable-login-all (all)"]:::proc
+    REV["Revoke sessions + remove login<br/>(employee record kept, re-enable later)"]:::err
+    REQ["POST /auth/request-login-otp<br/>{ email }"]:::proc
+    PW{"Account has a password?"}:::dec
+    REJ["400 — use password login instead"]:::err
+    GEN["Generate OTP (6 digits)<br/>cache, 10-min TTL"]:::proc
+    SES["AWS SES sends code"]:::ext
+    VER["POST /auth/verify-login-otp<br/>{ email, otp }"]:::proc
+    OK{"OTP valid, unused, unexpired?"}:::dec
+    TOK["Return { user, accessToken, refreshToken }<br/>mark OTP used"]:::ok
+    BAD["400 Invalid / expired code"]:::err
+
+    EN --> ACC --> MAIL
+    MAIL -.-> REQ
+    REQ --> PW
+    PW -- yes --> REJ
+    PW -- no --> GEN --> SES --> VER --> OK
+    OK -- yes --> TOK
+    OK -- no --> BAD
+    DIS --> REV
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+
+    <!-- 6 -->
+    <h2 id="staff">6 · Staff Invite (ADMIN / HR)</h2>
+    <p class="section-sub">Only the owner invites staff, and only as ADMIN or HR. Staff log in with email + password.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    INV["Owner: POST /company/invite-staff<br/>{ email, name, role }"]:::proc
+    ROLE{"role ∈ { ADMIN, HR }?"}:::dec
+    B400["400 — invalid role"]:::err
+    EX{"Email already has account?"}:::dec
+    C409["409 Conflict"]:::err
+    TOK["Create staff invite token"]:::proc
+    SES["AWS SES emails set-password link<br/>/accept-staff-invite?token=…"]:::ext
+    ACC["POST /auth/accept-staff-invite<br/>{ token, password }"]:::proc
+    TVALID{"Token valid &amp; unexpired?"}:::dec
+    BAD["400 Invalid / expired token"]:::err
+    CREATE["Create User + Credential<br/>assign role, link company"]:::proc
+    DONE["Return { user, tokens } — logged in"]:::ok
+
+    INV --> ROLE
+    ROLE -- no --> B400
+    ROLE -- yes --> EX
+    EX -- yes --> C409
+    EX -- no --> TOK --> SES
+    SES -.-> ACC --> TVALID
+    TVALID -- no --> BAD
+    TVALID -- yes --> CREATE --> DONE
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+
+    <!-- 7 -->
+    <h2 id="employee">7 · Employee Onboarding</h2>
+    <p class="section-sub">Single create or bulk Excel upload. Neither grants login — that is a separate, explicit step.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    START["Owner adds employees"]:::proc
+    MODE{"Single or bulk?"}:::dec
+    ONE["POST /employee/create-employee<br/>(companyId + body)"]:::proc
+    BULK["POST /employee/bulk-upload<br/>multipart file (.xlsx/.xls/.csv, ≤5MB)"]:::proc
+    PARSE["Parse sheet → validate rows<br/>(parseEmployeeSheet)"]:::proc
+    VAL{"Rows valid &amp; codes unique?"}:::dec
+    ERR["400 — row errors returned"]:::err
+    SAVE["Persist employees<br/>(status ACTIVE, no login)"]:::proc
+    LIST["GET /employee/get-employees<br/>(paged, search, filter)"]:::ok
+    EL["POST /employee/enable-login<br/>→ see Flow 5"]:::ok
+
+    START --> MODE
+    MODE -- single --> ONE --> SAVE
+    MODE -- bulk --> BULK --> PARSE --> VAL
+    VAL -- no --> ERR
+    VAL -- yes --> SAVE
+    SAVE --> LIST
+    SAVE --> EL
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+      </pre>
+    </div>
+
+    <!-- 8 -->
+    <h2 id="payroll">8 · Payroll Processing (S3 Upload)</h2>
+    <p class="section-sub">Excel is uploaded straight to S3 via a pre-signed URL, then registered as a run that is parsed into entries.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    U1["GET /payroll/upload-url<br/>{ fileName }"]:::proc
+    PS["Return { uploadUrl, fileKey }"]:::proc
+    PUT["PUT file bytes → S3 pre-signed URL<br/>(no auth header)"]:::ext
+    REG["POST /payroll/upload<br/>{ year, month, uploadType, sourceFileKey, replace? }"]:::proc
+    DUP{"Run exists for period?"}:::dec
+    REPL{"replace = true?"}:::dec
+    C409["409 — run already exists"]:::err
+    PARSE["Fetch file from S3 → parse rows"]:::proc
+    VAL{"Sheet valid?"}:::dec
+    FAILED["status = FAILED"]:::err
+    RUN["Create PayrollRun + PayrollEntry[]<br/>+ PayrollEntryComponent[]"]:::proc
+    DONE["status = PROCESSED"]:::ok
+    VIEW["GET /payroll/run · /runs<br/>PATCH/DELETE /entry · pay-statement"]:::ok
+
+    U1 --> PS --> PUT
+    PUT -.-> REG --> DUP
+    DUP -- yes --> REPL
+    REPL -- no --> C409
+    REPL -- yes --> PARSE
+    DUP -- no --> PARSE
+    PARSE --> VAL
+    VAL -- no --> FAILED
+    VAL -- yes --> RUN --> DONE --> VIEW
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+
+    <!-- 9 -->
+    <h2 id="salary">9 · Salary Structure Engine</h2>
+    <p class="section-sub">Components are resolved in a fixed order so percentages and formulas always have their inputs ready.</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart LR
+    A["FIXED<br/>flat amounts"]:::proc
+    B["PERCENTAGE_OF_CTC"]:::proc
+    C["PERCENTAGE_OF_BASIC"]:::proc
+    D["FORMULA<br/>expression evaluator"]:::proc
+    E["BALANCING<br/>absorbs the remainder"]:::proc
+    OUT["Gross · Deductions · Net Pay"]:::ok
+
+    A --> B --> C --> D --> E --> OUT
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+      </pre>
+    </div>
+    <div class="note">Supported strategies: <code>FIXED</code>, <code>PERCENTAGE_OF_CTC</code>, <code>PERCENTAGE_OF_BASIC</code>, <code>PERCENTAGE_OF_GROSS</code>, <code>FORMULA</code>, <code>BALANCING</code>.</div>
+
+    <!-- 10 -->
+    <h2 id="tax-lifecycle">10 · Tax Declaration Lifecycle</h2>
+    <p class="section-sub">A declaration moves through four states. Rejection sends it back to DRAFT for editing and resubmission.</p>
+    <div class="card">
+      <pre class="mermaid">
+stateDiagram-v2
+    [*] --> DRAFT: get-or-create (employee)
+    DRAFT --> DRAFT: PATCH /me/tax/declaration (edit, add proof)
+    DRAFT --> SUBMITTED: POST /me/tax/submit
+    SUBMITTED --> APPROVED: PATCH /tax/approve (owner)
+    SUBMITTED --> REJECTED: PATCH /tax/reject { reason } (owner)
+    REJECTED --> DRAFT: employee edits &amp; resubmits
+    APPROVED --> [*]
+      </pre>
+    </div>
+
+    <!-- 11 -->
+    <h2 id="tax-flow">11 · Tax Self-Service &amp; Approval</h2>
+    <p class="section-sub">Employee fills and submits their own declaration (<code>/me/tax</code>); the owner reviews, manages proofs, and approves or rejects (<code>/tax</code>).</p>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+    subgraph EMP["Employee — /api/me/tax"]
+      G["GET /declaration?year&amp;regime<br/>get or create (DRAFT)"]:::proc
+      ED["PATCH /declaration<br/>salary, regime, HRA, investments"]:::proc
+      PF["POST /proof  ·  DELETE /proof<br/>(S3 fileKey as proofDocKey)"]:::proc
+      RECALC["Engine recalculates<br/>taxable income &amp; tax payable"]:::proc
+      SUB["POST /submit { year }"]:::proc
+    end
+    subgraph OWN["Owner — /api/tax"]
+      TRK["GET /declarations · /summary<br/>tracking + status counts"]:::proc
+      DET["GET /declaration<br/>review items"]:::proc
+      DEC{"Approve or reject?"}:::dec
+      AP["PATCH /approve"]:::ok
+      RJ["PATCH /reject { reason }"]:::err
+      EXP["GET /export/tracking<br/>GET /export/declaration (.xlsx blob)"]:::ext
+    end
+
+    G --> ED --> RECALC
+    ED --> PF --> RECALC
+    RECALC --> SUB --> TRK --> DET --> DEC
+    DEC -- approve --> AP
+    DEC -- reject --> RJ
+    RJ -.-> ED
+    DET --> EXP
+    classDef proc fill:#1d2a47,stroke:#4f8cff,color:#d7dbe3;
+    classDef dec fill:#3a2f10,stroke:#d29922,color:#f0e6cf;
+    classDef ok fill:#10331c,stroke:#3fb950,color:#cdeccf;
+    classDef err fill:#3a1d1d,stroke:#f85149,color:#f6d0ce;
+    classDef ext fill:#2a1d3a,stroke:#bc8cff,color:#e5d6f6;
+      </pre>
+    </div>
+
+    <footer>
+      Generated from backend source on 2026-06-20 · Payroll &amp; Tax Declaration Web App ·
+      See <a href="API_DOCUMENTATION.md">API_DOCUMENTATION.md</a> for the endpoint reference.
+    </footer>
+  </main>
+</div>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: "dark",
+    securityLevel: "loose",
+    flowchart: { curve: "basis", useMaxWidth: true },
+    themeVariables: {
+      background: "#1c2029",
+      primaryColor: "#1d2a47",
+      primaryBorderColor: "#4f8cff",
+      primaryTextColor: "#d7dbe3",
+      lineColor: "#9aa3b2",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+    }
+  });
+</script>
+</body>
+</html>

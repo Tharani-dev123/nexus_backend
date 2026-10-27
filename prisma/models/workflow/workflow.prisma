@@ -1,0 +1,29 @@
+model WorkflowInstance {
+  id           String         @id @default(cuid())
+  module       String
+  entityId     String
+  companyId    String
+  status       String
+  currentStage String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  steps        WorkflowStep[]
+
+  @@index([module, entityId])
+  @@index([companyId])
+}
+
+model WorkflowStep {
+  id         String           @id @default(cuid())
+  instanceId String
+  stage      String
+  sequence   Int
+  approverId String?
+  action     String
+  note       String?
+  actedAt    DateTime?
+  createdAt  DateTime         @default(now())
+  instance   WorkflowInstance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+  @@index([instanceId])
+}

@@ -1,0 +1,13 @@
+model Department {
+  id        String     @id @default(cuid())
+  companyId String
+  branchId  String?
+  name      String
+  createdAt DateTime   @default(now())
+  deletedAt DateTime?
+  company   Company    @relation(fields: [companyId], references: [id])
+  branch    Branch?    @relation(fields: [branchId], references: [id])
+
+  @@unique([branchId, name, deletedAt])
+  @@index([companyId])
+}

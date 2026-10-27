@@ -1,0 +1,16 @@
+﻿info:
+  name: List Branches
+  type: http
+  seq: 15
+
+http:
+  method: GET
+  url: "{{baseUrl}}/branch/list-branches?companyId={{companyId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

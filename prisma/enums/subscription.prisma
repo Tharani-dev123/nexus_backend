@@ -1,0 +1,12 @@
+enum ProductModule {
+  COMPLIANCE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  TRIAL
+  SUSPENDED
+  GRACE_PERIOD
+}

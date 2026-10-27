@@ -1,0 +1,16 @@
+﻿info:
+  name: List Company Subscriptions
+  type: http
+  seq: 25
+
+http:
+  method: GET
+  url: "{{baseUrl}}/subscription/subscriptions"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

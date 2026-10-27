@@ -1,0 +1,16 @@
+﻿info:
+  name: Get Subscription Navigation
+  type: http
+  seq: 20
+
+http:
+  method: GET
+  url: "{{baseUrl}}/subscription/navigation"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

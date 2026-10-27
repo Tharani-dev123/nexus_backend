@@ -1,0 +1,13 @@
+model CompanyModule {
+  id          String        @id @default(cuid())
+  companyId   String
+  moduleCode  ProductModule
+  isEnabled   Boolean       @default(true)
+  activatedAt DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  company     Company       @relation(fields: [companyId], references: [id])
+
+  @@unique([companyId, moduleCode])
+  @@index([companyId])
+}

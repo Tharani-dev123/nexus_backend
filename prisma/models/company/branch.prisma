@@ -1,0 +1,21 @@
+model Branch {
+  id          String       @id @default(cuid())
+  companyId   String
+  name        String
+  code        String
+  addressLine String?
+  city        String?
+  state       String?
+  country     String?
+  pinCode     String?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  company     Company      @relation(fields: [companyId], references: [id])
+  departments Department[]
+
+  @@unique([companyId, code, deletedAt])
+  @@index([companyId])
+  @@index([companyId, isActive])
+}

@@ -1,0 +1,28 @@
+﻿info:
+  name: Create Branch
+  type: http
+  seq: 14
+
+http:
+  method: POST
+  url: "{{baseUrl}}/branch/create-branch?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Main Office",
+        "code": "MAIN",
+        "addressLine": "123 Main Street",
+        "city": "Austin",
+        "state": "Texas",
+        "country": "US",
+        "pinCode": "78701"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

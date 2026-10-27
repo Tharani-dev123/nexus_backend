@@ -1,0 +1,56 @@
+﻿opencollection: 1.0.0
+
+info:
+  name: Nexus API Client
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+  variables:
+    - name: baseUrl
+      value: http://localhost:3000/api
+    - name: accessToken
+      value: ""
+    - name: refreshToken
+      value: ""
+    - name: email
+      value: ""
+    - name: password
+      value: ""
+    - name: name
+      value: ""
+    - name: otp
+      value: ""
+    - name: companyId
+      value: ""
+    - name: departmentId
+      value: ""
+    - name: branchId
+      value: ""
+    - name: planId
+      value: ""
+    - name: inviteToken
+      value: ""
+    - name: sessionId
+      value: ""
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
+    presets:
+      request:
+        type: http

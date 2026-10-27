@@ -1,0 +1,23 @@
+﻿info:
+  name: Update Department
+  type: http
+  seq: 12
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/department/update-department?companyId={{companyId}}&id={{departmentId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Product Engineering",
+        "branchId": "{{branchId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

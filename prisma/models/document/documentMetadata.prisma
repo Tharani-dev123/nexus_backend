@@ -1,0 +1,16 @@
+model DocumentMetadata {
+  id         String    @id @default(cuid())
+  companyId  String
+  category   String
+  fileName   String
+  fileSize   Int
+  mimeType   String
+  s3Key      String
+  uploadedBy String
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([companyId])
+  @@index([category])
+}

@@ -1,0 +1,23 @@
+﻿info:
+  name: Cancel Subscription
+  type: http
+  seq: 28
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/subscriptions/cancel"
+  body:
+    type: json
+    data: |-
+      {
+        "companyId": "{{companyId}}",
+        "reason": "Requested by company"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

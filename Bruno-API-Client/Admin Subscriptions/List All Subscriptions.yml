@@ -1,0 +1,16 @@
+﻿info:
+  name: List All Subscriptions
+  type: http
+  seq: 37
+
+http:
+  method: GET
+  url: "{{baseUrl}}/admin/subscriptions?page=1&pageSize=20&sortBy=name&sortOrder=asc"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

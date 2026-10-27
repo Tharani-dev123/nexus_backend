@@ -1,0 +1,42 @@
+name: Bump package.json version (main)
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    # Prevent infinite loop: don't run on our own commit, and skip if commit opted out
+    if: >
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[skip version]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Bump minor version (no tag)
+        run: npm version minor --no-git-tag-version
+
+      - name: Commit and push
+        run: |
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add package.json package-lock.json
+          git commit -m "chore(main): bump version [skip version]"
+          git push

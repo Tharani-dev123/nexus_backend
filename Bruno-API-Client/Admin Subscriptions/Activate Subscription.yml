@@ -1,0 +1,27 @@
+﻿info:
+  name: Activate Subscription
+  type: http
+  seq: 26
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/subscriptions/activate"
+  body:
+    type: json
+    data: |-
+      {
+        "companyId": "{{companyId}}",
+        "planCode": "STARTER",
+        "durationMonths": 12,
+        "paymentMode": "INVOICE",
+        "amount": 290,
+        "currency": "USD"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

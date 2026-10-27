@@ -1,0 +1,16 @@
+﻿info:
+  name: Delete Department
+  type: http
+  seq: 13
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/department/delete-department?companyId={{companyId}}&id={{departmentId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

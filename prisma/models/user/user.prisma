@@ -1,0 +1,16 @@
+model User {
+  id                          String               @id @default(uuid())
+  name                        String
+  email                       String               @unique
+  createdAt                   DateTime             @default(now())
+  updatedAt                   DateTime             @updatedAt
+  isEmailVerified             Boolean              @default(false)
+  deletedAt                   DateTime?
+  companyId                   String?
+  userRole                    UserRole
+  auditLogs                   AuditLog[]
+  ownedCompanies              Company[]            @relation("CompanyRootUser")
+  refreshTokens               RefreshToken[]
+  company                     Company?             @relation("CompanyUsers", fields: [companyId], references: [id], onDelete: Cascade)
+  credential                  Credential?
+}

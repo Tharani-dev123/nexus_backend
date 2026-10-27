@@ -1,0 +1,16 @@
+﻿info:
+  name: Delete Branch
+  type: http
+  seq: 18
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/branch/delete-branch?id={{branchId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

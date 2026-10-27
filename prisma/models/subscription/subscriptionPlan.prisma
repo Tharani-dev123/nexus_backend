@@ -1,0 +1,14 @@
+model SubscriptionPlan {
+  id            String                @id @default(cuid())
+  code          String                @unique
+  name          String
+  description   String?
+  monthlyPrice  Decimal               @default(0) @db.Decimal(10, 2)
+  annualPrice   Decimal               @default(0) @db.Decimal(10, 2)
+  isActive      Boolean               @default(true)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  subscriptions CompanySubscription[]
+
+  @@index([isActive])
+}

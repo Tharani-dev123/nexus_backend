@@ -1,0 +1,24 @@
+﻿info:
+  name: Change Subscription Plan
+  type: http
+  seq: 29
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/subscriptions/change-plan"
+  body:
+    type: json
+    data: |-
+      {
+        "companyId": "{{companyId}}",
+        "planCode": "PRO",
+        "reason": "Plan upgrade"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

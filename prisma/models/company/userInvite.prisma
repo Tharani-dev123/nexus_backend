@@ -1,0 +1,14 @@
+model UserInvite {
+  id        String    @id @default(cuid())
+  companyId String
+  email     String
+  name      String
+  role      UserRole
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  company   Company   @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+}

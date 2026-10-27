@@ -1,0 +1,23 @@
+﻿info:
+  name: Create Department
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/department/create-department?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Engineering",
+        "branchId": "{{branchId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

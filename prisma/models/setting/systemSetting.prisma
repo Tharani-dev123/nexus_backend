@@ -1,0 +1,10 @@
+model SystemSetting {
+  id           String   @id @default(cuid())
+  companyId    String   @unique
+  attendance   Json?
+  tax          Json?
+  email        Json?
+  notification Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

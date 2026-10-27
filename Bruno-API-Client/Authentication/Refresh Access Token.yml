@@ -1,0 +1,38 @@
+﻿info:
+  name: Refresh Access Token
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/refresh-access-token"
+  body:
+    type: json
+    data: |-
+      {
+        "refreshToken":"{{refreshToken}}"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        var jsonData = res.getBody();
+
+        if (jsonData.success) {
+            bru.setVar("accessToken", jsonData.data.accessToken);
+
+            if (jsonData.data.user && jsonData.data.user.id) {
+                bru.setVar("testUserId", jsonData.data.user.id);
+            }
+        } else {
+            console.log("Login failed:", jsonData.error.message);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

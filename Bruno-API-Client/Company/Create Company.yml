@@ -1,0 +1,26 @@
+﻿info:
+  name: Create Company
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/company/create-company"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Example Company",
+        "email": "company@example.com",
+        "phone": "+1-555-0100",
+        "address": "123 Main Street",
+        "website": "https://example.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

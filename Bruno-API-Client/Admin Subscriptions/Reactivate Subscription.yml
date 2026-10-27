@@ -1,0 +1,22 @@
+﻿info:
+  name: Reactivate Subscription
+  type: http
+  seq: 31
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/subscriptions/reactivate"
+  body:
+    type: json
+    data: |-
+      {
+        "companyId": "{{companyId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

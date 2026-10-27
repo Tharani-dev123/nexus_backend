@@ -1,0 +1,22 @@
+﻿info:
+  name: Revoke Session
+  type: http
+  seq: 6
+
+http:
+  method: POST
+  url: "{{baseUrl}}/user/revoke-session"
+  body:
+    type: json
+    data: |-
+      {
+        "sessionId":"{{sessionId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

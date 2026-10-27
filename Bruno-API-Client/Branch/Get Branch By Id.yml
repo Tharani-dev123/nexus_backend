@@ -1,0 +1,16 @@
+﻿info:
+  name: Get Branch By Id
+  type: http
+  seq: 16
+
+http:
+  method: GET
+  url: "{{baseUrl}}/branch/get-branch-by-id?id={{branchId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

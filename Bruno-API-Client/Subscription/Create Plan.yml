@@ -1,0 +1,27 @@
+﻿info:
+  name: Create Plan
+  type: http
+  seq: 23
+
+http:
+  method: POST
+  url: "{{baseUrl}}/subscription/plans?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "code": "STARTER",
+        "name": "Starter",
+        "description": "Starter plan",
+        "monthlyPrice": 29,
+        "annualPrice": 290,
+        "isActive": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

@@ -1,0 +1,16 @@
+﻿info:
+  name: Logout All Devices
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/logout-all-devices"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

@@ -1,0 +1,22 @@
+﻿info:
+  name: Update Branch
+  type: http
+  seq: 17
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/branch/update-branch?id={{branchId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated Branch Name"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+

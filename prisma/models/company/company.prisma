@@ -1,0 +1,21 @@
+model Company {
+  id                      String                    @id @default(uuid())
+  name                    String
+  email                   String?
+  phone                   String?
+  address                 String?
+  website                 String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  deletedAt               DateTime?
+  rootUserId              String?
+  branches                Branch[]
+  rootUser                User?                     @relation("CompanyRootUser", fields: [rootUserId], references: [id])
+  companyModules          CompanyModule[]
+  subscriptions           CompanySubscription[]
+  departments             Department[]
+  userInvites            UserInvite[]
+  users                   User[]                    @relation("CompanyUsers")
+
+  @@index([name])
+}
