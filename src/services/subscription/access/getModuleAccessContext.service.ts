@@ -18,7 +18,6 @@ export interface ModuleAccessContext {
   companyId: string;
   subscription: SubscriptionSummary | null;
   enabledModules: ProductModule[];
-  /** Cross-module integration flags (attendance→payroll, auto-LOP, …). */
   /** Dynamic sidebar payload for this company. */
   navigation: Navigation;
 }

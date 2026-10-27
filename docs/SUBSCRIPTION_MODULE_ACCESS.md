@@ -22,18 +22,7 @@ hardcoded menus.
 Sub-features `SHIFT` and `HOLIDAY` are **not** separately purchasable — they ship
 inside the `ATTENDANCE` module and share its gate.
 
-### Cross-module capabilities
-
-Buying modules together unlocks integrations. The access payload returns a
-`capabilities` map derived from the enabled set:
-
-| Capability                 | True when                          | Effect                                  |
-| -------------------------- | ---------------------------------- | --------------------------------------- |
-| `payrollManualMode`        | PAYROLL, no ATTENDANCE             | Pay days entered manually (Company C).  |
-| `attendanceDrivesPayroll`  | ATTENDANCE + PAYROLL              | Attendance feeds the payroll run (D).   |
-| `leaveDrivesAttendance`    | LEAVE + ATTENDANCE               | Approved leave writes attendance days.  |
-| `lopAutoCalculated`        | LEAVE + ATTENDANCE + PAYROLL    | LOP computed end-to-end (Company E).    |
-| `biometricFeedsAttendance` | BIOMETRIC + ATTENDANCE           | Biometric punches ingested.             |
+Cross-module capability flags are not included in the current access response.
 
 ---
 
@@ -59,7 +48,6 @@ access snapshot alongside the tokens:
       "isActive": true
     },
     "enabledModules": ["ATTENDANCE", "PAYROLL"],
-    "capabilities": { "attendanceDrivesPayroll": true, "payrollManualMode": false },
     "navigation": { "base": [ … ], "sections": [ … ] }
   }
 }
@@ -77,7 +65,7 @@ All under `/api/subscription`, authenticated, and `?companyId=` scoped
 
 | Method | Path                          | Permission            | Purpose |
 | ------ | ----------------------------- | --------------------- | ------- |
-| GET    | `/subscription/access`        | any member            | Full access snapshot (subscription + modules + capabilities + navigation). |
+| GET    | `/subscription/access`        | any member            | Full access snapshot (subscription + modules + navigation). |
 | GET    | `/subscription/navigation`    | any member            | Just the sidebar payload. |
 | GET    | `/subscription/plans`         | `SUBSCRIPTION:READ`   | Plan catalogue (each annotated with its modules). |
 | POST   | `/subscription/plans`         | `SUBSCRIPTION:CREATE` | Create a plan. |
@@ -105,12 +93,10 @@ A request to a feature route the company has not purchased returns:
 **Rule: never hardcode the sidebar or route table. Derive both from the access
 payload.**
 
-1. On login, persist `enabledModules`, `capabilities` and `navigation` (and
+1. On login, persist `enabledModules` and `navigation` (and
    re-hydrate via `GET /subscription/access` on refresh).
 2. Render the sidebar from `navigation.base` + `navigation.sections` verbatim.
 3. Guard routes with a `<ModuleGuard>` that checks `enabledModules`.
-4. Branch feature UX on `capabilities` (e.g. show manual pay-days entry when
-   `payrollManualMode`).
 
 ### Access store (React + Zustand sketch)
 
@@ -120,7 +106,6 @@ import { create } from "zustand";
 type Nav = { base: NavItem[]; sections: NavSection[] };
 interface AccessState {
   enabledModules: string[];
-  capabilities: Record<string, boolean>;
   navigation: Nav | null;
   setAccess: (a: Partial<AccessState>) => void;
   can: (module: string) => boolean;
@@ -128,7 +113,6 @@ interface AccessState {
 
 export const useAccess = create<AccessState>((set, get) => ({
   enabledModules: [],
-  capabilities: {},
   navigation: null,
   setAccess: (a) => set(a),
   can: (module) => get().enabledModules.includes(module),
@@ -137,7 +121,6 @@ export const useAccess = create<AccessState>((set, get) => ({
 // after login:
 useAccess.getState().setAccess({
   enabledModules: data.enabledModules,
-  capabilities: data.capabilities,
   navigation: data.navigation,
 });
 ```
