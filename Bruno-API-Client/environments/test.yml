@@ -1,0 +1,41 @@
+name: test
+variables:
+  - name: baseUrl
+    value: https://nexus-backend-dun-iota.vercel.app/api
+    description: ""
+  - name: accessToken
+    value: ""
+    description: ""
+  - name: refreshToken
+    value: ""
+    description: ""
+  - name: email
+    value: ""
+    description: ""
+  - name: password
+    value: ""
+    description: ""
+  - name: name
+    value: ""
+    description: ""
+  - name: otp
+    value: ""
+    description: ""
+  - name: companyId
+    value: 0179bfdf-f244-48ff-af0c-b3581188fe9c
+    description: ""
+  - name: departmentId
+    value: ""
+    description: ""
+  - name: branchId
+    value: cmvo4rs4h0000icu8ojtktjnh
+    description: ""
+  - name: planId
+    value: ""
+    description: ""
+  - name: inviteToken
+    value: ""
+    description: ""
+  - name: sessionId
+    value: ""
+    description: ""
