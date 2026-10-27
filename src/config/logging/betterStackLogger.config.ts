@@ -4,10 +4,12 @@ import LOGGING_CONFIG from "./index.config.js";
 
 const { BETTERSTACK_TOKEN, BETTERSTACK_URL } = LOGGING_CONFIG;
 
-export const logtail = new Logtail(BETTERSTACK_TOKEN as string, {
-  endpoint: BETTERSTACK_URL,
-});
-
-const BETTERSTACK_LOG_TRANSPORT = new LogtailTransport(logtail);
+// Tests and local development may not have a Better Stack token. Do not
+// initialize Logtail unless logging is configured with a real token.
+const BETTERSTACK_LOG_TRANSPORT = BETTERSTACK_TOKEN
+  ? new LogtailTransport(
+      new Logtail(BETTERSTACK_TOKEN, { endpoint: BETTERSTACK_URL }),
+    )
+  : undefined;
 
 export default BETTERSTACK_LOG_TRANSPORT;

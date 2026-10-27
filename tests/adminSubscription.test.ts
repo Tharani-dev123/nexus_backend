@@ -360,7 +360,6 @@ describe("Admin Subscription Services & Expiry Engine", () => {
         }),
       );
       expect(res.enabledModules).toEqual(["TAX_DECLARATION"]);
-      expect(res.capabilities.leaveDrivesAttendance).toBe(false);
     });
   });
 

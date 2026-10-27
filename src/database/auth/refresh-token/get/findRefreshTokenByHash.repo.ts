@@ -5,6 +5,6 @@ export default async function findRefreshTokenByHash(
   tx: Prisma.TransactionClient = prisma,
 ) {
   return await tx.refreshToken.findUnique({
-    where: { tokenHash },
+    where: {tokenHash},
   });
 }
