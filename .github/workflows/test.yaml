@@ -10,6 +10,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      BETTERSTACK_LOG_PUSH: "false"
 
     steps:
       - name: Checkout code
