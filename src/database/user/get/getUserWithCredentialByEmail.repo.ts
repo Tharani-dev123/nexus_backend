@@ -11,6 +11,7 @@ export default async function findUserWithCredentialByEmail(
       credential: {
         select: { passwordHash: true },
       },
+      studentProfile: { select: { status: true } },
     },
   });
 }

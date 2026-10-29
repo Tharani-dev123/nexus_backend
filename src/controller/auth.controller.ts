@@ -15,6 +15,7 @@ import { RequestLoginOtpInput } from "../schemas/auth/requestLoginOtp.schema.js"
 import { VerifyLoginOtpInput } from "../schemas/auth/verifyLoginOtp.schema.js";
 import { AcceptUserInviteInput } from "../schemas/auth/acceptUserInvite.schema.js";
 import USER_INVITE_SERVICE from "../services/userInvite/index.service.js";
+import { completeStudentSetup, requestStudentSetup } from "../services/student/studentOnboarding.service.js";
 
 async function registerHandler(req: Request, res: Response) {
   const data = req.body as SignupInput;
@@ -31,7 +32,7 @@ async function loginHandler(req: Request, res: Response) {
 
 async function sendVerificationEmail(req: Request, res: Response) {
   const { email } = req.body as SendVerificationEmailInput;
-  await USER_SERVICE.VERIFICATION.sendVerificaitonEmail(email);
+  await USER_SERVICE.VERIFICATION.sendVerificaitonEmail(email, req.ip ?? "unknown");
   return successMessageResponse(res, "Verification email sent", 200);
 }
 
@@ -48,7 +49,7 @@ async function logoutHandler(req: Request, res: Response) {
 async function verifyEmail(req: Request, res: Response) {
   const { email, otp } = req.body as VerifyEmailConfirmInput;
 
-  await USER_SERVICE.VERIFICATION.verifyEmail(email, otp);
+  await USER_SERVICE.VERIFICATION.verifyEmail(email, otp, req.ip ?? "unknown");
 
   return successMessageResponse(res, "Email verified", 200);
 }
@@ -56,7 +57,7 @@ async function verifyEmail(req: Request, res: Response) {
 async function forgotPassword(req: Request, res: Response) {
   const { email } = req.body as ForgotPasswordInput;
 
-  await AUTH_SERVICE.forgotPassword(email);
+  await AUTH_SERVICE.forgotPassword(email, req.ip ?? "unknown");
 
   return successMessageResponse(res, "Reset password email sent", 200);
 }
@@ -64,7 +65,7 @@ async function forgotPassword(req: Request, res: Response) {
 async function resetPassword(req: Request, res: Response) {
   const { email, otp, newPassword } = req.body as ResetPasswordInput;
 
-  await AUTH_SERVICE.resetPassword(email, otp, newPassword);
+  await AUTH_SERVICE.resetPassword(email, otp, newPassword, req.ip ?? "unknown");
 
   return successMessageResponse(res, "Password reset successful", 200);
 }
@@ -73,7 +74,7 @@ async function resetPassword(req: Request, res: Response) {
 async function requestLoginOtp(req: Request, res: Response) {
   const { email } = req.body as RequestLoginOtpInput;
 
-  await AUTH_SERVICE.requestLoginOtp(email);
+  await AUTH_SERVICE.requestLoginOtp(email, req.ip ?? "unknown");
 
   return successMessageResponse(res, "Login code sent", 200);
 }
@@ -91,6 +92,17 @@ async function acceptUserInvite(req: Request, res: Response) {
 
   const result = await USER_INVITE_SERVICE.acceptUserInvite(token, password, req);
 
+  return successDataResponse(res, result, 200);
+}
+
+async function requestStudentSetupHandler(req: Request, res: Response) {
+  await requestStudentSetup(req.body.email, req.ip ?? "unknown");
+  return successMessageResponse(res, "If the account needs setup, a code has been sent", 200);
+}
+
+async function completeStudentSetupHandler(req: Request, res: Response) {
+  const { email, otp, password } = req.body;
+  const result = await completeStudentSetup(email, otp, password, req.ip ?? "unknown");
   return successDataResponse(res, result, 200);
 }
 
@@ -126,6 +138,8 @@ const AUTH_CONTROLLER = {
   requestLoginOtp,
   verifyLoginOtp,
   acceptUserInvite,
+  requestStudentSetupHandler,
+  completeStudentSetupHandler,
   getNewAccessToken,
   logoutAllDevice,
 };

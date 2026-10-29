@@ -4,6 +4,7 @@ import { requestContext } from "../context/requestContext.js";
 import AUTH_SERVICE from "../services/auth/index.service.js";
 import USER_SERVICE from "../services/user/index.service.js";
 import COMPANY_SERVICE from "../services/company/index.service.js";
+import prisma from "../database/index.db.js";
 
 export default async function authenticateUser(
   req: Request,
@@ -25,6 +26,16 @@ export default async function authenticateUser(
   );
 
   const user = await USER_SERVICE.getUserById(decoded.user_id);
+
+  const isPasswordChange = req.method === "POST" && req.baseUrl.endsWith("/user") && req.path === "/change-password";
+  if (user.mustChangePassword && !isPasswordChange) {
+    throw new AppError("Password setup is required before using this account", 403);
+  }
+
+  if (user.userRole === "STUDENT") {
+    const profile = await prisma.studentProfile.findUnique({ where: { userId: user.id }, select: { status: true } });
+    if (profile?.status !== "ACTIVE") throw new AppError("Student account is not active", 403);
+  }
 
   let company = null;
 

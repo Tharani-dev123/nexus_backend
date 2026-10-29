@@ -1,10 +1,12 @@
 import { Request } from "express";
-import otpLoginCache from "../../../config/cache/otpLogin.cache.js";
+import { OtpPurpose } from "@prisma/client";
 import USER_REPO from "../../../database/user/index.repo.js";
 import { AppError } from "../../../types/AppError.js";
 import AUTH_SERVICE from "../index.service.js";
 import buildLoginAccess from "./buildLoginAccess.service.js";
 import { getDeviceInfoAndIp } from "../../../utils/deviceInfo.util.js";
+import prisma from "../../../database/index.db.js";
+import OTP_SERVICE from "../OTP/persistentOtp.service.js";
 
 /**
  * Completes a passwordless login: validates the emailed one-time code and, on
@@ -12,15 +14,32 @@ import { getDeviceInfoAndIp } from "../../../utils/deviceInfo.util.js";
  * consumes it on a correct match).
  */
 export default async function verifyLoginOtp(email: string, otp: string, req?: Request) {
-  const user = await USER_REPO.getUserByEmail(email);
+  if (!await OTP_SERVICE.recordOtpVerificationAttempt(req?.ip ?? "unknown", OtpPurpose.LOGIN)) throw new AppError("Invalid or expired login code", 401);
+  const user = await USER_REPO.getUserWithCredentialByEmail(email);
 
   if (!user) {
     throw new AppError("Invalid or expired login code", 401);
   }
 
-  const valid = otpLoginCache.validate(user.id, otp);
+  if (user.mustChangePassword || (user.credential && user.userRole !== "STUDENT")) {
+    await OTP_SERVICE.invalidateOtp(email, OtpPurpose.LOGIN);
+    throw new AppError("Invalid or expired login code", 401);
+  }
+  if (user.userRole === "STUDENT") {
+    const profile = await prisma.studentProfile.findUnique({ where: { userId: user.id }, select: { status: true } });
+    if (profile?.status !== "ACTIVE") {
+      await OTP_SERVICE.invalidateOtp(email, OtpPurpose.LOGIN);
+      throw new AppError("Invalid or expired login code", 401);
+    }
+  }
+
+  const valid = await OTP_SERVICE.consumePersistentOtp(email, OtpPurpose.LOGIN, otp, user.id, req?.ip ?? "unknown");
   if (!valid) {
     throw new AppError("Invalid or expired login code", 401);
+  }
+
+  if (user.userRole === "STUDENT" && !user.isEmailVerified) {
+    await prisma.user.update({ where: { id: user.id }, data: { isEmailVerified: true } });
   }
 
   const refreshToken = await AUTH_SERVICE.REFRESH_TOKEN.generateRefreshToken({
@@ -46,6 +65,7 @@ export default async function verifyLoginOtp(email: string, otp: string, req?: R
       companyId: user.companyId,
       userRole: user.userRole,
       createdAt: user.createdAt,
+      mustChangePassword: user.mustChangePassword,
     },
     accessToken,
     refreshToken: refreshToken.refreshToken,

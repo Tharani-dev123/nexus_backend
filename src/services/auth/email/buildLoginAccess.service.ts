@@ -11,6 +11,6 @@ export default async function buildLoginAccess(
   companyId: string | null | undefined,
   userRole?: UserRole,
 ): Promise<ModuleAccessContext | null> {
-  if (!companyId) return null;
+  if (!companyId || userRole === "STUDENT") return null;
   return SUBSCRIPTION_SERVICE.getModuleAccessContext(companyId, userRole);
 }

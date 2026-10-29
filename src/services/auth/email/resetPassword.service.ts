@@ -1,23 +1,35 @@
-import forgotPasswordCache from "../../../config/cache/forgotPassword.cache.js";
-import USER_SERVICE from "../../user/index.service.js";
+import { OtpPurpose } from "@prisma/client";
+import prisma from "../../../database/index.db.js";
+import USER_REPO from "../../../database/user/index.repo.js";
+import { AppError } from "../../../types/AppError.js";
 import AUTH_SERVICE from "../index.service.js";
-import AUTH_REPO from "../../../database/auth/index.repo.js";
+import OTP_SERVICE from "../OTP/persistentOtp.service.js";
 
 export default async function resetPasswordService(
   email: string,
   otp: string,
   newPassword: string,
+  ipAddress = "unknown",
 ) {
-  const user = await USER_SERVICE.getUserByEmail(email);
-
-  if (!forgotPasswordCache.validate(user.id, otp)) {
-    throw new Error("Invalid or expired OTP");
+  if (!await OTP_SERVICE.recordOtpVerificationAttempt(ipAddress, OtpPurpose.PASSWORD_RESET)) throw new AppError("Invalid or expired OTP", 401);
+  const user = await USER_REPO.getUserWithCredentialByEmail(email);
+  if (!user?.credential) throw new AppError("Invalid or expired OTP", 401);
+  if (user.userRole === "STUDENT") {
+    const profile = await prisma.studentProfile.findUnique({ where: { userId: user.id }, select: { status: true } });
+    if (profile?.status !== "ACTIVE") {
+      await OTP_SERVICE.invalidateOtp(email, OtpPurpose.PASSWORD_RESET);
+      throw new AppError("Invalid or expired OTP", 401);
+    }
   }
-
-  forgotPasswordCache.delete(user.id);
-
+  if (!await OTP_SERVICE.consumePersistentOtp(email, OtpPurpose.PASSWORD_RESET, otp, user.id, ipAddress)) {
+    throw new AppError("Invalid or expired OTP", 401);
+  }
   const hashPassword = await AUTH_SERVICE.PASSWORD.hashPassword(newPassword);
-  const updatedUser = await AUTH_REPO.PASSWORD.update(user, hashPassword);
+  const updatedUser = await prisma.$transaction(async (tx) => {
+    const updatedCredential = await tx.credential.update({ where: { userId: user.id }, data: { passwordHash: hashPassword } });
+    await tx.user.update({ where: { id: user.id }, data: { mustChangePassword: false } });
+    return updatedCredential;
+  });
 
   return updatedUser;
 }

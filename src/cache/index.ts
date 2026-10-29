@@ -1,4 +1,3 @@
-import logger from "../config/logging/logger.config.js";
 
 type CacheEntry = {
   value: string;
@@ -62,9 +61,6 @@ export class Cache {
   validate(key: string, value: string): boolean {
     const cachedValue = this.get(key);
 
-    logger.debug(
-      `Validating cache for key: ${key}, provided value: ${value}, cached value: ${cachedValue}`,
-    );
     if (cachedValue === null) {
       return false;
     }

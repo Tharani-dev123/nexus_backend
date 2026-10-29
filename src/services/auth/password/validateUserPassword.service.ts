@@ -9,6 +9,9 @@ export default async function validateUserPassword(
   if (!user || !user.credential) {
     throw new AppError("User not found", 404);
   }
+  if (user.userRole === "STUDENT" && user.studentProfile?.status !== "ACTIVE") {
+    throw new AppError("Student account is not active", 403);
+  }
   if (
     !(await AUTH_SERVICE.PASSWORD.verifyPassword(
       password,
