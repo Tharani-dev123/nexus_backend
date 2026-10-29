@@ -1,0 +1,21 @@
+info:
+  name: Add Student Department
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: "{{baseUrl}}/students/{{studentId}}/departments?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "departmentId": "{{departmentId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -39,3 +39,24 @@ variables:
   - name: sessionId
     value: ""
     description: ""
+  - name: studentId
+    value: ""
+    description: ""
+  - name: studentCode
+    value: ""
+    description: ""
+  - name: admissionCodeId
+    value: ""
+    description: ""
+  - name: studentEmail
+    value: ""
+    description: ""
+  - name: studentPassword
+    value: ""
+    description: ""
+  - name: admissionNumber
+    value: ""
+    description: ""
+  - name: staffUserId
+    value: ""
+    description: ""

@@ -45,6 +45,20 @@ request:
       value: ""
     - name: sessionId
       value: ""
+    - name: studentId
+      value: ""
+    - name: studentCode
+      value: ""
+    - name: admissionCodeId
+      value: ""
+    - name: studentEmail
+      value: ""
+    - name: studentPassword
+      value: ""
+    - name: admissionNumber
+      value: ""
+    - name: staffUserId
+      value: ""
 bundled: false
 extensions:
   bruno:

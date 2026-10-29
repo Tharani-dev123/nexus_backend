@@ -1,0 +1,23 @@
+info:
+  name: Complete Student Setup
+  type: http
+  seq: 13
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/complete-student-setup"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{studentEmail}}",
+        "otp": "{{otp}}",
+        "password": "{{studentPassword}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

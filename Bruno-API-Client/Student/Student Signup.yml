@@ -1,0 +1,35 @@
+info:
+  name: Student Signup
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/students/signup"
+  body:
+    type: json
+    data: |-
+      {
+        "code": "{{studentCode}}",
+        "name": "{{name}}",
+        "email": "{{studentEmail}}",
+        "password": "{{studentPassword}}",
+        "admissionNumber": "{{admissionNumber}}",
+        "departmentIds": []
+      }
+  auth: none
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        var jsonData = res.getBody();
+        if (jsonData.success && jsonData.data && jsonData.data.id) {
+            bru.setVar("studentId", jsonData.data.id);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: Replace Student Departments
+  type: http
+  seq: 12
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/students/{{studentId}}/departments?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "departmentIds": ["{{departmentId}}"]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

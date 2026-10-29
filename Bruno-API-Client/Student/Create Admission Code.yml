@@ -1,0 +1,35 @@
+info:
+  name: Create Admission Code
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/students/admission-codes?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "branchId": "{{branchId}}",
+        "maxUses": 25,
+        "expiresInDays": 7,
+        "allowsSelfRegistration": true,
+        "requiresApproval": true
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        var jsonData = res.getBody();
+        if (jsonData.success && jsonData.data && jsonData.data.code) {
+            bru.setVar("studentCode", jsonData.data.code);
+            bru.setVar("admissionCodeId", jsonData.data.id || "");
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

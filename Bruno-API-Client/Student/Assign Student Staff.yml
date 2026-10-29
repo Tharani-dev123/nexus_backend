@@ -1,0 +1,23 @@
+info:
+  name: Assign Student Staff
+  type: http
+  seq: 16
+
+http:
+  method: POST
+  url: "{{baseUrl}}/students/staff-assignments?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "userId": "{{staffUserId}}",
+        "branchId": "{{branchId}}",
+        "departmentId": "{{departmentId}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
