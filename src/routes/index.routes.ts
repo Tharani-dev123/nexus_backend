@@ -12,6 +12,10 @@ import authorizeCompanyAccess from "../middleware/company/authorizeCompanyAccess
 import requireModuleAccess from "../middleware/subscription/requireModuleAccess.middleware.js";
 import authorizeRoles from "../middleware/rbac/authorizeRoles.middleware.js";
 import adminSubscriptionRouter from "./adminSubscription.routes.js";
+import studentRouter from "./student.routes.js";
+import STUDENT_CONTROLLER from "../controller/student.controller.js";
+import validateInput from "../middleware/inputValidator.middleware.js";
+import { studentSignupSchema } from "../schemas/student/student.schema.js";
 
 const indexRouter = Router();
 
@@ -25,6 +29,9 @@ indexRouter.use("/settings", authenticateUser, authorizeCompanyAccess, settingRo
 indexRouter.use("/subscription", authenticateUser, subscriptionRouter);
 indexRouter.use("/admin/subscriptions", authenticateUser, authorizeRoles("SUPER_ADMIN"), adminSubscriptionRouter);
 indexRouter.use("/branch", authenticateUser, authorizeCompanyAccess, branchRouter);
+indexRouter.post("/students/signup", validateInput(studentSignupSchema), STUDENT_CONTROLLER.signup);
+indexRouter.use("/students", authenticateUser, authorizeCompanyAccess, studentRouter);
+indexRouter.use("/student", authenticateUser, studentRouter);
 
 
 export default indexRouter;

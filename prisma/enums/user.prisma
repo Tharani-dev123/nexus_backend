@@ -7,4 +7,26 @@ enum UserRole {
   MANAGER
   COMPANY_ADMIN
   FINANCE
+  STUDENT
+}
+
+enum StudentStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+  ARCHIVED
+  REJECTED
+}
+
+enum StudentDepartmentStatus {
+  ACTIVE
+  ENDED
+}
+
+enum OtpPurpose {
+  LOGIN
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  STUDENT_SETUP
 }

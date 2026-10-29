@@ -38,6 +38,7 @@ export async function loginByEmail(email: string, password: string, req?: Reques
       companyId: user.companyId,
       userRole: user.userRole,
       createdAt: user.createdAt,
+      mustChangePassword: user.mustChangePassword,
     },
     accessToken: accessToken,
     refreshToken: refreshToken.refreshToken,

@@ -221,6 +221,8 @@ POST   /api/auth/reset-password
 POST   /api/auth/refresh-access-token
 ```
 
+See [Student onboarding and OTP security](docs/STUDENT_AUTH_ONBOARDING.md) for admission-code registration, forced account setup, OTP limits, and the guarded PostgreSQL integration-test command.
+
 ---
 
 ## Company

@@ -13,6 +13,7 @@
   "db:status": "prisma migrate status",
   "seed": "tsx prisma/seed.ts",
   "test": "vitest run",
+  "test:integration": "node scripts/run-postgres-integration.mjs",
   "test:watch": "vitest"
   },
 

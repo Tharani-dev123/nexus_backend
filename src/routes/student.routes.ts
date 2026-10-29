@@ -1,0 +1,27 @@
+import { Router } from "express";
+import { z } from "zod";
+import validateInput from "../middleware/inputValidator.middleware.js";
+import STUDENT_CONTROLLER from "../controller/student.controller.js";
+import { addDepartmentSchema, admissionCodeSchema, createStudentSchema, departmentIdSchema, departmentsSchema, listStudentsSchema, rejectStudentSchema, selfRegistrationSettingSchema, selfUpdateSchema, staffAssignmentSchema, statusSchema, studentIdSchema, updateStudentSchema } from "../schemas/student/student.schema.js";
+
+const studentRouter = Router();
+studentRouter.get("/me/activities", STUDENT_CONTROLLER.meActivities);
+studentRouter.get("/me/departments", STUDENT_CONTROLLER.myDepartments);
+studentRouter.get("/me", STUDENT_CONTROLLER.me);
+studentRouter.patch("/me", validateInput(selfUpdateSchema), STUDENT_CONTROLLER.updateMe);
+studentRouter.post("/staff-assignments", validateInput(staffAssignmentSchema), STUDENT_CONTROLLER.assignStaff);
+studentRouter.post("/admission-codes", validateInput(admissionCodeSchema), STUDENT_CONTROLLER.createAdmissionCode);
+studentRouter.patch("/self-registration", validateInput(selfRegistrationSettingSchema), STUDENT_CONTROLLER.setSelfRegistration);
+studentRouter.delete("/admission-codes/:codeId", validateInput(z.object({ params: z.object({ codeId: z.string().min(1).max(100) }) })), STUDENT_CONTROLLER.revokeAdmissionCode);
+studentRouter.post("/", validateInput(createStudentSchema), STUDENT_CONTROLLER.create);
+studentRouter.get("/", validateInput(listStudentsSchema), STUDENT_CONTROLLER.list);
+studentRouter.get("/:studentId/activities", validateInput(studentIdSchema), STUDENT_CONTROLLER.activities);
+studentRouter.patch("/:studentId/status", validateInput(statusSchema), STUDENT_CONTROLLER.status);
+studentRouter.post("/:studentId/approve", validateInput(studentIdSchema), STUDENT_CONTROLLER.approve);
+studentRouter.post("/:studentId/reject", validateInput(rejectStudentSchema), STUDENT_CONTROLLER.reject);
+studentRouter.put("/:studentId/departments", validateInput(departmentsSchema), STUDENT_CONTROLLER.departments);
+studentRouter.post("/:studentId/departments", validateInput(addDepartmentSchema), STUDENT_CONTROLLER.addDepartment);
+studentRouter.delete("/:studentId/departments/:departmentId", validateInput(departmentIdSchema), STUDENT_CONTROLLER.endDepartment);
+studentRouter.get("/:studentId", validateInput(studentIdSchema), STUDENT_CONTROLLER.get);
+studentRouter.patch("/:studentId", validateInput(updateStudentSchema), STUDENT_CONTROLLER.update);
+export default studentRouter;

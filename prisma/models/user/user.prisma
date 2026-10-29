@@ -5,6 +5,7 @@ model User {
   createdAt                   DateTime             @default(now())
   updatedAt                   DateTime             @updatedAt
   isEmailVerified             Boolean              @default(false)
+  mustChangePassword          Boolean              @default(false)
   deletedAt                   DateTime?
   companyId                   String?
   userRole                    UserRole
@@ -13,4 +14,9 @@ model User {
   refreshTokens               RefreshToken[]
   company                     Company?             @relation("CompanyUsers", fields: [companyId], references: [id], onDelete: Cascade)
   credential                  Credential?
+  studentProfile              StudentProfile?
+  studentActivityActions       StudentActivity[]       @relation("StudentActivityActor")
+  studentStaffAssignments      StudentStaffAssignment[] @relation("AssignedStaff")
+  createdStudentAssignments    StudentStaffAssignment[] @relation("AssignmentCreator")
+  otpChallenges                OtpChallenge[]
 }

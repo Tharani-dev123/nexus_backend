@@ -14,8 +14,13 @@ model Branch {
   deletedAt   DateTime?
   company     Company      @relation(fields: [companyId], references: [id])
   departments Department[]
+  studentProfiles StudentProfile[]
+  studentActivities StudentActivity[]
+  studentStaffAssignments StudentStaffAssignment[]
+  studentAdmissionCodes StudentAdmissionCode[]
 
   @@unique([companyId, code, deletedAt])
   @@index([companyId])
   @@index([companyId, isActive])
+  @@unique([companyId, id])
 }

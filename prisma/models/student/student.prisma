@@ -1,0 +1,140 @@
+model StudentProfile {
+  id                 String                  @id @default(cuid())
+  userId             String                  @unique
+  companyId          String
+  branchId           String
+  admissionNumber    String
+  dateOfBirth        DateTime?
+  phone              String?
+  address            String?
+  guardianName       String?
+  guardianPhone      String?
+  guardianEmail      String?
+  emergencyContact   String?
+  enrollmentDate     DateTime                 @default(now())
+  status             StudentStatus            @default(ACTIVE)
+  approvedAt         DateTime?
+  approvedById       String?
+  rejectionReason    String?
+  archivedAt         DateTime?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  user               User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company            Company                  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch             Branch                   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  memberships        StudentDepartment[]
+  activities         StudentActivity[]
+
+  @@unique([companyId, branchId, admissionNumber])
+  @@index([companyId, status, createdAt])
+  @@index([branchId, status])
+  @@unique([id, companyId, branchId])
+}
+
+model StudentDepartment {
+  id          String                  @id @default(cuid())
+  studentId   String
+  departmentId String
+  companyId    String
+  branchId     String
+  joinedAt    DateTime                @default(now())
+  leftAt      DateTime?
+  status      StudentDepartmentStatus @default(ACTIVE)
+  assignedById String?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+  student     StudentProfile          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  department  Department              @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+
+  @@index([studentId, status])
+  @@index([departmentId, status])
+  @@index([companyId, branchId])
+}
+
+model StudentStaffAssignment {
+  id          String   @id @default(cuid())
+  userId      String
+  companyId   String
+  branchId    String
+  departmentId String?
+  createdById String
+  createdAt   DateTime @default(now())
+  user        User     @relation("AssignedStaff", fields: [userId], references: [id], onDelete: Cascade)
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  department  Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("AssignmentCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([userId, branchId, departmentId])
+  @@index([companyId, branchId])
+}
+
+model StudentActivity {
+  id          String   @id @default(cuid())
+  studentId   String
+  companyId   String
+  branchId    String
+  actorId     String?
+  type        String
+  description String
+  occurredAt  DateTime @default(now())
+  metadata    Json?
+  sourceModule String?
+  sourceRecordId String?
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch      Branch   @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  actor       User?    @relation("StudentActivityActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([studentId, occurredAt])
+  @@index([companyId, branchId, occurredAt])
+}
+
+model StudentAdmissionCode {
+  id                 String   @id @default(cuid())
+  companyId          String
+  branchId           String
+  codeHash           String   @unique
+  allowsSelfRegistration Boolean @default(false)
+  requiresApproval   Boolean  @default(true)
+  maxUses            Int      @default(1)
+  uses               Int      @default(0)
+  expiresAt          DateTime
+  revokedAt          DateTime?
+  createdById        String
+  createdAt          DateTime @default(now())
+  company            Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  branch             Branch   @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, branchId, expiresAt])
+}
+
+model OtpChallenge {
+  id            String     @id @default(cuid())
+  subjectKey    String
+  userId        String?
+  purpose       OtpPurpose
+  codeHash      String
+  expiresAt     DateTime
+  attempts      Int        @default(0)
+  windowStartedAt DateTime @default(now())
+  lastSentAt    DateTime   @default(now())
+  consumedAt    DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  user          User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([subjectKey, purpose])
+  @@index([userId, purpose, expiresAt])
+  @@index([expiresAt])
+}
+
+model OtpRateLimit {
+  key              String   @id
+  count            Int      @default(0)
+  windowStartedAt  DateTime @default(now())
+  lastRequestAt    DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([windowStartedAt])
+}

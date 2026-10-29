@@ -3,6 +3,7 @@ import validateInput from "../middleware/inputValidator.middleware.js";
 import AUTH_CONTROLLER from "../controller/auth.controller.js";
 import AUTH_SCHEMAS from "../schemas/auth/index.schema.js";
 import authenticateUser from "../middleware/auth.middleware.js";
+import { requestStudentSetupSchema, completeStudentSetupSchema } from "../schemas/auth/studentSetup.schema.js";
 
 const authRouter = Router();
 
@@ -59,6 +60,8 @@ authRouter.post(
   validateInput(AUTH_SCHEMAS.acceptUserInvite),
   AUTH_CONTROLLER.acceptUserInvite,
 );
+authRouter.post("/request-student-setup", validateInput(requestStudentSetupSchema), AUTH_CONTROLLER.requestStudentSetupHandler);
+authRouter.post("/complete-student-setup", validateInput(completeStudentSetupSchema), AUTH_CONTROLLER.completeStudentSetupHandler);
 
 authRouter.post(
   "/refresh-access-token",
