@@ -1,0 +1,22 @@
+info:
+  name: Update My Student Profile
+  type: http
+  seq: 20
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/student/me"
+  body:
+    type: json
+    data: |-
+      {
+        "phone": "+1-555-0130",
+        "address": "Updated student address"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

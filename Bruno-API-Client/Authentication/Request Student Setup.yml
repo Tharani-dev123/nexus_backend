@@ -1,0 +1,21 @@
+info:
+  name: Request Student Setup
+  type: http
+  seq: 12
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/request-student-setup"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "{{studentEmail}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

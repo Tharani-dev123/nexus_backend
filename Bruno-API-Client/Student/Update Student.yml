@@ -1,0 +1,22 @@
+info:
+  name: Update Student
+  type: http
+  seq: 8
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/students/{{studentId}}?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Updated Student Name",
+        "phone": "+1-555-0199"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

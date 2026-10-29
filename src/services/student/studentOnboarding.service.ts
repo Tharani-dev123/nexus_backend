@@ -22,16 +22,16 @@ export async function createAdmissionCode(
   if (!adminRoles.includes(actor.userRole)) throw new AppError("Forbidden: administrator role required", 403);
   const rawCode = randomToken(32);
   const expiresAt = new Date(Date.now() + input.expiresInDays * 24 * 60 * 60 * 1000);
-  await prisma.$transaction(async (tx) => {
+  const admissionCode = await prisma.$transaction(async (tx) => {
     const branch = await tx.branch.findFirst({ where: { id: input.branchId, companyId, deletedAt: null, isActive: true }, select: { id: true } });
     if (!branch) throw new AppError("Branch not found in this organization", 400);
-    await tx.studentAdmissionCode.create({ data: {
+    return tx.studentAdmissionCode.create({ data: {
       companyId, branchId: branch.id, codeHash: sha256Base64Url(rawCode), maxUses: input.maxUses,
       expiresAt, allowsSelfRegistration: input.allowsSelfRegistration, requiresApproval: input.requiresApproval,
       createdById: actor.id,
-    } });
+    }, select: { id: true } });
   });
-  return { code: rawCode, branchId: input.branchId, expiresAt, maxUses: input.maxUses, requiresApproval: input.requiresApproval };
+  return { id: admissionCode.id, code: rawCode, branchId: input.branchId, expiresAt, maxUses: input.maxUses, requiresApproval: input.requiresApproval };
 }
 
 export async function revokeAdmissionCode(actor: { userRole: UserRole }, companyId: string, codeId: string) {

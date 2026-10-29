@@ -1,0 +1,15 @@
+info:
+  name: List Students
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{baseUrl}}/students?companyId={{companyId}}&branchId={{branchId}}&page=1&limit=20"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

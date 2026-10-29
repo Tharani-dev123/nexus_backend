@@ -1,0 +1,21 @@
+info:
+  name: Set Student Status
+  type: http
+  seq: 9
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/students/{{studentId}}/status?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "ACTIVE"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: Reject Student
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: "{{baseUrl}}/students/{{studentId}}/reject?companyId={{companyId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "reason": "Admission documents require review"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

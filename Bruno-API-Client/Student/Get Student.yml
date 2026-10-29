@@ -1,0 +1,15 @@
+info:
+  name: Get Student
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: "{{baseUrl}}/students/{{studentId}}?companyId={{companyId}}"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
